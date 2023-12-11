@@ -1,0 +1,8 @@
+.select-container {
+    background-color: aqua;
+    display: flex;
+    flex-direction: row-reverse;
+}
+.select-bar {
+    max-width: fit-content;
+}

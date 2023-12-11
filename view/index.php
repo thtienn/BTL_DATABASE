@@ -32,21 +32,56 @@
                     require_once('db_connnection.php');
 
                     $conn = OpenCon();
-                    $query = "SELECT * FROM `mon_an`;";
+                    $query = "SELECT * FROM `Product`;";
 
                     $result = $conn->query($query);
 
                     if ($result->num_rows > 0) {
                         // OUTPUT DATA OF EACH ROW
                         while ($row = $result->fetch_assoc()) {
-                            $maMonAn = $row['maMonAn'];
-                            $tenMonAn = $row['tenMonAn'];
-                            $moTaMonan = $row['moTaMonan'];
-                            $giaNiemYet = $row['giaNiemYet'];
-                            $query = "SELECT * FROM `anh_mon_an` WHERE maMonAn = '$maMonAn';";
+                            $maMonAn = $row['Product_ID'];
+                            $tenMonAn = $row['Name'];
+                            $moTaMonan = $row['Description'];
+                            $giaNiemYet = $row['Price'];
+                            $query = "SELECT * FROM `Product` WHERE Product_ID = '$maMonAn';";
 
                             $result1 = $conn->query($query);
-                            $result2 = $result1->fetch_assoc()['anhMonAn'];
+                            $result2 = $result1->fetch_assoc()['Photo'];
+                            
+                            echo "<div class='col'>
+                        <div class='card shadow-sm'>
+                            <img src='$result2' alt=''>
+
+                            <div class='card-body'>
+                                <h4 class='card-title'>$tenMonAn</h4>
+                                <p class='card-text'>$moTaMonan</p>
+                                <div class='d-flex justify-content-between align-items-center'>
+                                    <div class='btn-group'>
+                                        <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?maMonAn=$maMonAn'>View</a></button>
+                                    </div>
+                                    <div class='text-muted text-bold align-middle'>Giá: $giaNiemYet Đ</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>";
+                        }
+                    }
+
+                    $query = "SELECT * FROM `Combo`;";
+
+                    $result = $conn->query($query);
+
+                    if ($result->num_rows > 0) {
+                        // OUTPUT DATA OF EACH ROW
+                        while ($row = $result->fetch_assoc()) {
+                            $maMonAn = $row['Combo_ID'];
+                            $tenMonAn = $row['Name'];
+                            $moTaMonan = $row['Description'];
+                            $giaNiemYet = $row['Price'];
+                            $query = "SELECT * FROM `Combo` WHERE Combo_ID = '$maMonAn';";
+
+                            $result1 = $conn->query($query);
+                            $result2 = $result1->fetch_assoc()['Photo'];
                             
                             echo "<div class='col'>
                         <div class='card shadow-sm'>

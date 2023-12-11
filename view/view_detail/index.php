@@ -17,7 +17,7 @@
 
             $conn = OpenCon();
             $maMonAn = $_GET['maMonAn'];
-            $query = "SELECT * FROM `mon_an` WHERE maMonAn = '$maMonAn';";
+            $query = "SELECT * FROM `Product` WHERE Product_ID = '$maMonAn';";
 
             $result = $conn->query($query);
 
