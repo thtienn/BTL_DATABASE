@@ -1582,6 +1582,8 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Add_new_employee` (
         signal sqlstate '45000' set message_text = 'Existing User Name';
       ELSEIF(EXISTS (SELECT * FROM Employee WHERE Phone_Number = NewPhoneNumber)) THEN
         signal sqlstate '45000' set message_text = 'Existing Phone Number';
+      ELSEIF(EXISTS (SELECT * FROM Employee WHERE Email = NewEmail)) THEN
+        signal sqlstate '45000' set message_text = 'Existing Email';
       ELSEIF (SELECT LENGTH(NewPhoneNumber) <> 10 || NewPhoneNumber NOT REGEXP "^0[0-9]{9}") THEN
         signal sqlstate '45000' set message_text = 'Invalid Phone Number';
       ELSEIF (CHAR_LENGTH(NewUserName) < 7 || CHAR_LENGTH(NewUserName) > 30) THEN
@@ -1634,24 +1636,33 @@ CREATE PROCEDURE UpdateEmployee(
 )
 BEGIN
     -- Check if the employee exists
-    IF EXISTS (SELECT * FROM Employee WHERE Employee_ID = employeeID) THEN
-        -- Update the employee information
-        UPDATE Employee
-        SET Name = NewName,
-            Phone_Number = NewPhone,
-            SEX = Gender,
-            DoB = DateOfBirth,
-            Email = NewEmail,
-            Date_of_Lease = LeaseDate,
-            Salary = NewSalary,
-            Job_Type = NewJob,
-            Branch_ID = NewBranch,
-            Manager_ID = NewManager 
-        WHERE Employee_ID = employeeID AND EXISTS(SELECT * FROM Employee WHERE Employee_ID = NewManager) AND EXISTS(SELECT * FROM Branch WHERE Branch_ID = NewBranch);
-        
-        SELECT 'Employee information updated successfully' AS Result;
-    ELSE
-        SELECT 'Employee not found' AS Result;
+    IF NOT EXISTS (SELECT * FROM Employee WHERE Employee_ID = employeeID) THEN
+            signal sqlstate '45000' set message_text = 'Employee Not Found';
+        ELSEIF(EXISTS (SELECT * FROM Employee WHERE Phone_Number = NewPhoneNumber)) THEN
+            signal sqlstate '45000' set message_text = 'Existing Phone Number';
+        ELSEIF(EXISTS (SELECT * FROM Employee WHERE Email = NewEmail)) THEN
+            signal sqlstate '45000' set message_text = 'Existing Email';
+        ELSEIF (SELECT LENGTH(NewPhoneNumber) <> 10 || NewPhoneNumber NOT REGEXP "^0[0-9]{9}") THEN
+            signal sqlstate '45000' set message_text = 'Invalid Phone Number';
+        ELSEIF NOT EXISTS (SELECT * FROM Employee WHERE Employee_ID = NewManager) THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Manager Not Found';
+        ELSEIF NOT EXISTS (SELECT * FROM Branch WHERE Branch_ID = NewBranch) THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Branch Not Found';
+        ELSE
+            -- Update the employee information
+            UPDATE Employee
+            SET Name = NewName,
+                Phone_Number = NewPhone,
+                SEX = Gender,
+                DoB = DateOfBirth,
+                Email = NewEmail,
+                Date_of_Lease = LeaseDate,
+                Salary = NewSalary,
+                Job_Type = NewJob,
+                Branch_ID = NewBranch,
+                Manager_ID = NewManager 
+            WHERE Employee_ID = employeeID;
+            SELECT 'Employee information updated successfully' AS Result;
     END IF;
 END $$
 

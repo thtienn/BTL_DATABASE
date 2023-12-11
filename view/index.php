@@ -126,7 +126,7 @@
 
                 <div class='row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3'>
                     <?php
-                    require_once('db_connnection.php');
+                    require_once('db_connection.php');
 
                     $conn = OpenCon();
                     $query = "SELECT * FROM Product;";
@@ -199,6 +199,13 @@
                                             <div class='text-muted text-bold align-middle'>Giá: $giaNiemYet Đ</div>
                                         </div>
                                     </div>
+<<<<<<< HEAD
+=======
+                                    <div>
+                                        <button onclick=\"addToOrder('<?php echo $productName; ?>', <?php echo $productPrice; ?>)\">Thêm vào đơn hàng</button>
+                                    </div>
+                                    <div class='text-muted text-bold align-middle'>Giá: $Price Đ</div>
+>>>>>>> 2ae9080 (admin - manage employee - Do Tien fix bug giup to :<)
                                 </div>
                             </div>
                         </div>";

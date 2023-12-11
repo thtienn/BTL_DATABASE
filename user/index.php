@@ -48,7 +48,7 @@
                     <div class="modal-body">
                             <div class="form-group">
                                 <label>Mã số nhân viên</label>
-                                <input class="form-control my-2" type="text" placeholder="NV01" name="tenDangNhap" readonly />
+                                <input class="form-control my-2" type="text" placeholder="NV01" name="maNhanVien" readonly />
                             </div>
                             <div class="form-group">
                                 <label>Tên đăng nhập</label>
@@ -63,27 +63,44 @@
                                 <input class="form-control my-2" type="text" placeholder="Lê Phan Thuỷ Tiên" name="tenNhanVien" />
                             </div>
 
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input class="form-control my-2" type="number" placeholder="0123456789" name="sdt" />
+                            </div>
+
                             <div class="form-group" style="margin-bottom: 2px;">
                                 <label>Giới tính</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select name="gioiTinh" class="form-select" aria-label="Default select example">
                                     <option selected>Chọn giới tính</option>
                                     <option value="M">Nam</option>
                                     <option value="F">Nữ</option>
                                     <option value="O">Khác</option>
                                 </select>
                             </div>
+
+                            <div class="form-group">
+                                <label>Ngày sinh</label>
+                                <input class="form-control my-2" type="date" pattern="\d{4}-\d{2}-\d{2}" placeholder="06/03/2003" name="dob" />
+                            </div>
         
                             <div class="form-group">
                                 <label>Email</label>
                                 <input class="form-control my-2" type="email" placeholder="panicAdmin@gmail.com" name="email" />
                             </div>
+
                             <div class="form-group">
-                                <label>Số điện thoại</label>
-                                <input class="form-control my-2" type="number" placeholder="0123456789" name="sdt" />
+                                <label>Ngày ký hợp đồng</label>
+                                <input class="form-control my-2" type="date" placeholder="06/03/2022" name="leaseDate" />
                             </div>
+
+                            <div class="form-group">
+                                <label>Mức lương</label>
+                                <input class="form-control my-2" type="number" placeholder="10,000,000VND" name="salary" />
+                            </div>
+                            
                             <div class="form-group" style="margin-bottom: 2px;">
                                 <label>Vị trí</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select name="work-position" class="form-select" aria-label="Default select example">
                                     <option selected>Chọn vị trí công việc</option>
                                     <option value="Manager">Manager</option>
                                     <option value="Cashier">Cashier</option>
@@ -92,7 +109,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Cửa hàng</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select name="store" class="form-select" aria-label="Default select example">
                                     <option selected>Chọn cửa hàng</option>
                                     <?php
                                         $queryBranch = "SELECT * FROM `Branch`;";
@@ -109,7 +126,7 @@
 
                             <div class="form-group">
                                 <label>Quản lý</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select name="manager" class="form-select" aria-label="Default select example">
                                     <option selected>Chọn quản lý</option>
                                     <?php
                                         $queryBranch = "SELECT * FROM `Employee` WHERE Job_Type = 'Manager';";
@@ -189,7 +206,7 @@
                             <td class='align-middle'>
                                 <div class="d-inline-flex">
                                     <button type='button' class='btn-edit btn btn-primary m-1'  data-bs-target='#Edit' data-bs-toggle='modal'>Edit</button>
-                                    <button type='button' class='btn-delete btn btn-danger m-1' data-bs-tenDangNhap='<?php echo $row['tenDangNhap'] ?>' data-bs-target='#Delete' data-bs-toggle='modal'>Delete</button>
+                                    <button type='button' class='btn-delete btn btn-danger m-1' data-bs-tenDangNhap='<?php echo $row['Employee_ID'] ?>' data-bs-target='#Delete' data-bs-toggle='modal'>Delete</button>
                                 </div>
                             </td>
                         </tr>
@@ -210,20 +227,13 @@
                     <form action="edit.php" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
                             <div class="form-group">
-                                <label>Mã số nhân viên</label>
-                                <input class="form-control my-2" type="text" placeholder="NV01" name="tenDangNhap" readonly />
-                            </div>
-                            <div class="form-group">
-                                <label>Tên đăng nhập</label>
-                                <input class="form-control my-2" type="text" placeholder="user_0" name="tenDangNhap" readonly />
-                            </div>
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input class="form-control my-2" type="text" placeholder="password123" name="password" readonly />
-                            </div>
-                            <div class="form-group">
                                 <label>Tên nhân viên</label>
                                 <input class="form-control my-2" type="text" placeholder="Lê Phan Thuỷ Tiên" name="tenNhanVien" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input class="form-control my-2" type="number" placeholder="0123456789" name="sdt" />
                             </div>
 
                             <div class="form-group" style="margin-bottom: 2px;">
@@ -235,15 +245,24 @@
                                     <option value="O">Khác</option>
                                 </select>
                             </div>
+
+                            <div class="form-group">
+                                <label>Ngày sinh</label>
+                                <input class="form-control my-2" type="date" pattern="\d{4}-\d{2}-\d{2}" placeholder="06/03/2003" name="dob" />
+                            </div>
         
                             <div class="form-group">
                                 <label>Email</label>
                                 <input class="form-control my-2" type="email" placeholder="panicAdmin@gmail.com" name="email" />
                             </div>
+
                             <div class="form-group">
-                                <label>Số điện thoại</label>
-                                <input class="form-control my-2" type="number" placeholder="0123456789" name="sdt" />
+                                <label>Ngày ký hợp đồng</label>
+                                <input class="form-control my-2" type="date" placeholder="06/03/2022" name="leaseDate" />
                             </div>
+
+                            
+                            
                             <div class="form-group" style="margin-bottom: 2px;">
                                 <label>Vị trí</label>
                                 <select class="form-select" aria-label="Default select example">

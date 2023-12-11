@@ -1,9 +1,9 @@
 <?php
 require_once('db_connnection.php');
-$tenDangNhap = $_POST['tenDangNhap'];
+$id = $_POST['id'];
 
 $conn = OpenCon();
-$query = "CALL Delete_khach_hang('$tenDangNhap')";
+$query = "CALL DeleteEmployee('$id')";
 
 if ($conn->query($query) === TRUE) {
     echo "Successfully";
