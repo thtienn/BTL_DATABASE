@@ -20,11 +20,10 @@ function getCustomerInfo($customerId) {
 function getOrderItems($orderId) {
     $conn = OpenCon();
 
-    $sql = "SELECT * FROM `Order` WHERE Order_ID = $orderId";
+    $sql = "SELECT * FROM OrderItems WHERE Order_ID = $orderId";
     $result = $conn->query($sql);
 
     $orderItems = [];
-
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $orderItems[] = $row;
@@ -32,9 +31,25 @@ function getOrderItems($orderId) {
     }
 
     CloseCon($conn);
-
     return $orderItems;
 }
+
+function getOrderDetails($orderId) {
+    $conn = OpenCon();
+
+    $sql = "SELECT * FROM `Order` WHERE Order_ID = $orderId";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $orderDetails = $result->fetch_assoc();
+        CloseCon($conn);
+        return $orderDetails;
+    } else {
+        CloseCon($conn);
+        return null;
+    }
+}
+
 
 function updateOrderStatus($orderId, $newStatus) {
     $conn = OpenCon();
@@ -194,7 +209,6 @@ echo "
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Giỏ hàng</title>
-    <link rel='stylesheet' href='styles.css'>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -233,6 +247,17 @@ echo "
             transform: scale(1.05);
         }
 
+        .order-details {
+            display: none;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+
+        .order.active {
+            background-color: #f0f0f0;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -240,26 +265,26 @@ echo "
             left: 50%;
             transform: translate(-50%, -50%);
             width: 80%;
-    max-width: 600px;
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    z-index: 1000;
-}
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1000;
+        }
 
-.modal-content {
-    max-height: 400px;
-    overflow-y: auto;
-}
+        .modal-content {
+            max-height: 400px;
+            overflow-y: auto;
+        }
 
-.close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 18px;
-}
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
@@ -270,8 +295,9 @@ $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        echo "<div class='order' onclick='viewOrderDetails(" . $row['OrderID'] . ")'>";
-        echo "<p>OrderID: <span>" . $row['OrderID'] . "</span></p>";
+        echo "<div class='order' onclick='viewOrderDetails(" . $row['Order_ID'] . ")'>";
+        echo "<p>OrderID: <span>" . $row['Order_ID'] . "</span></p>";
+       
         echo "</div>";
     }
 } else {
@@ -289,6 +315,7 @@ CloseCon($conn);
         <span class="close" onclick="closeModal()">&times;</span>
         <h2>Thông tin đơn hàng</h2>
         <form id="orderDetailsForm">
+            <input type="hidden" name="viewOrder" value="true">
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['viewOrder'])) {
                 $orderId = $_POST['Order_ID'];
@@ -403,6 +430,12 @@ CloseCon($conn);
     </div>
 </div>
 
-<script src="script.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    function viewOrderDetails(orderId) {
+        console.log('Thông tin đơn hàng', orderId);
+        document.getElementById('orderDetailsModal').style.display = 'block';
+    }
+</script>
 </body>
 </html>
