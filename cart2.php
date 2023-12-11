@@ -1,144 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giỏ hàng</title>
+    <title>Giỏ Hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        header {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1em 0;
+            background-color: #f8f9fa;
         }
 
         main {
-            max-width: 800px;
-            margin: 20px auto;
             background-color: #fff;
             padding: 20px;
+            border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .card {
             margin-bottom: 20px;
         }
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
+        .card-title {
+            font-size: 1.5rem;
         }
 
-        th {
-            background-color: #f2f2f2;
+        .card-text {
+            color: #6c757d;
         }
 
-        select, button {
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-
-        .total {
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
-        button {
-            background-color: #333;
-            color: #fff;
+        .btn-primary {
+            background-color: #007bff;
             border: none;
-            padding: 15px;
-            cursor: pointer;
         }
 
-        button:hover {
-            background-color: #555;
+        .btn-primary:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
+
 <body>
 
-    <header>
-        <h1>Giỏ hàng</h1>
-    </header>
+    <main class="container py-5">
+        <h1 class="text-center mb-4">Giỏ Hàng</h1>
 
-    <main>
-        <table>
-            <thead>
-                <tr>
-                    <th>Sản phẩm</th>
-                    <th>Giá</th>
-                    <th>Số lượng</th>
-                    <th>Thành tiền</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Đây là nơi bạn sẽ thêm sản phẩm từ giỏ hàng của bạn -->
-                <tr>
-                    <td>Product 1</td>
-                    <td>$19.99</td>
-                    <td>2</td>
-                    <td>$39.98</td>
-                </tr>
-                <tr>
-                    <td>Product 2</td>
-                    <td>$29.99</td>
-                    <td>1</td>
-                    <td>$29.99</td>
-                </tr>
-            </tbody>
-        </table>
+        <?php
+        require_once('db_connection.php');
 
-        <label for="promo">Chọn chương trình khuyến mãi:</label>
-        <select id="promo">
-            <option value="none">Không có khuyến mãi</option>
-            <option value="discount_10">Giảm giá 10%</option>
-            <option value="free_shipping">Miễn phí giao hàng</option>
-        </select>
+        $conn = OpenCon();
 
-        <label for="shipping">Chọn đơn vị giao hàng:</label>
-        <select id="shipping">
-            <option value="standard">Giao hàng tiêu chuẩn</option>
-            <option value="express">Giao hàng nhanh</option>
-        </select>
+        $customerID = 'your_customer_id';
+        $orderQuery = "SELECT * FROM `Order` WHERE Customer_ID = '$customerID'";
+        $orderResult = $conn->query($orderQuery);
 
-        <label for="location">Chọn địa điểm giao hàng:</label>
-        <select id="location">
-            <option value="1">KTX khu A</option>
-            <option value="2">KTX khu B</option>
-        </select>
+        if ($orderResult->num_rows > 0) {
+            while ($order = $orderResult->fetch_assoc()) {
+                $orderID = $order['Order_ID'];
+                $orderStatus = $order['Status'];
+                $orderTotalPrice = $order['Total_Price'];
 
-        <label for="phone">Chọn số điện thoại:</label>
-        <select id="phone">
-            <option value="1">0123456789</option>
-            <option value="2">0987654321</option>
-        </select>
+                echo "<div class='card'>
+                        <div class='card-body'>
+                            <h5 class='card-title'>Đơn Hàng #$orderID</h5>
+                            <p class='card-text'>Trạng Thái: $orderStatus</p>
+                            <p class='card-text'>Tổng Giá: $orderTotalPrice Đ</p>
+                            <button class='btn btn-primary' onclick='showPaymentModal($orderID)'>Thanh Toán</button>
+                        </div>
+                      </div>";
+            }
+        } else {
+            echo "<p>Không có đơn hàng nào trong giỏ hàng của bạn.</p>";
+        }
 
-        <p class="total">Tổng giá trị: $69.97</p>
+        CloseCon($conn);
+        ?>
 
-        <button onclick="confirmPayment()">Xác nhận thanh toán</button>
+        <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!-- Nội dung modal sẽ được cập nhật bằng JavaScript -->
+                </div>
+            </div>
+        </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <script>
-        function confirmPayment() {
-            // Đây là nơi bạn có thể thêm logic xác nhận thanh toán
-            const promo = document.getElementById('promo').value;
-            const shipping = document.getElementById('shipping').value;
-
-            alert(`Chương trình khuyến mãi: ${promo}\nĐơn vị giao hàng: ${shipping}\nThanh toán thành công!`);
+        function showPaymentModal(orderID) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'get_payment_modal.php?orderID=' + orderID, true);
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    document.querySelector('.modal-content').innerHTML = xhr.responseText;
+                    $('#paymentModal').modal('show');
+                } else {
+                    console.error('Yêu cầu thất bại. Mã lỗi: ' + xhr.status);
+                }
+            };
+            xhr.onerror = function () {
+                console.error('Có lỗi khi kết nối đến máy chủ.');
+            };
+            xhr.send();
         }
     </script>
 
 </body>
+
 </html>
