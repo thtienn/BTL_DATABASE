@@ -59,7 +59,7 @@ function updateOrderStatus($orderId, $newStatus) {
     CloseCon($conn);
 }
 
-function calculateTotalBill($orderId, $promotionId = null) {
+function calculateTotalBill($orderId, $promotionId) {
     $conn = OpenCon();
 
     $sql = "SELECT Calculate_Total_Bill('$orderId', '$promotionId') AS totalBill";
@@ -115,12 +115,6 @@ function completeOrder() {
     echo "</script>";
 }
 
-function closeModal() {
-    echo "<script>";
-    echo "var modal = document.getElementById('orderDetailsModal');";
-    echo "modal.style.display = 'none';";
-    echo "</script>";
-}
 
 function getProvinces() {
     $conn = OpenCon();
@@ -436,6 +430,12 @@ echo"
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
+        function closeModal() {
+        console.log('Closing modal...');
+        var modal = document.getElementById('orderDetailsModal');
+        modal.style.display = 'none';
+    }
+
         $(document).ready(function() {
         $('.order-btn').on('click', function() {
             var $orderId = $(this).data('Order_ID');
