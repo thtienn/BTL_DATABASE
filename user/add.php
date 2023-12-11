@@ -17,7 +17,7 @@
         $quanLy = $_POST['manager'];
         
         $conn = OpenCon();
-        $query = "CALL Add_new_employee();";
+        $query = "CALL Add_new_employee('$maNhanVien', '$tenDangNhap', '$password', '$tenNhanVien', '$sdt', '$gioiTinh', '$ngaySinh', '$email', '$hopDong', '$mucLuong', '$viTri', '$cuaHang', '$quanLy');";
 
         if ($conn->query($query) === TRUE) {
             echo "New record created successfully";
