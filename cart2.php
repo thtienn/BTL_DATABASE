@@ -195,11 +195,76 @@ echo "
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Giỏ hàng</title>
     <link rel='stylesheet' href='styles.css'>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .cart {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .order {
+            border: 1px solid #ddd;
+            padding: 10px;
+            cursor: pointer;
+            width: 200px;
+            text-align: center;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .order:hover {
+            transform: scale(1.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+    max-width: 600px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1000;
+}
+
+.modal-content {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
+    </style>
 </head>
 <body>
     <div id='cart'>";
 
-// Truy vấn các đơn hàng
 $sql = "SELECT * FROM `Order`";
 $result = $conn->query($sql);
 
