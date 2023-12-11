@@ -158,7 +158,7 @@
                                         
                                     </div>
                                     <div>
-                                        <button onclick="addToOrder('<?php echo $productName; ?>', <?php echo $productPrice; ?>)">Thêm vào đơn hàng</button>
+                                       <button onclick="addToOrder('<?php echo $tenMonAn; ?>', <?php echo $giaNiemYet; ?>)">Thêm vào đơn hàng</button>
                                     </div>
                                     <div class='text-muted text-bold align-middle'>Giá: $Price Đ</div>
                                 </div>
@@ -197,7 +197,7 @@
                                         
                                     </div>
                                     <div>
-                                        <button onclick="addToOrder('<?php echo $productName; ?>', <?php echo $productPrice; ?>)">Thêm vào đơn hàng</button>
+                                        <button onclick="addToOrder('<?php echo $tenMonAn; ?>', <?php echo $giaNiemYet; ?>)">Thêm vào đơn hàng</button>
                                     </div>
                                     <div class='text-muted text-bold align-middle'>Giá: $Price Đ</div>
                                 </div>
