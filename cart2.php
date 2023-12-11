@@ -4,7 +4,7 @@ require_once('db_connnection.php');
 function getCustomerInfo($customerId) {
     $conn = OpenCon();
 
-    $sql = "SELECT * FROM `Customer` WHERE Customer_ID = $customerId";
+    $sql = "SELECT * FROM `Customer` WHERE Customer_ID = '$customerId'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -20,7 +20,7 @@ function getCustomerInfo($customerId) {
 function getOrderItems($orderId) {
     $conn = OpenCon();
 
-    $sql = "SELECT * FROM `Order` WHERE Order_ID = $orderId";
+    $sql = "SELECT * FROM `Order` WHERE Order_ID = '$orderId'";
     $result = $conn->query($sql);
 
     $orderItems = [];
@@ -37,7 +37,7 @@ function getOrderItems($orderId) {
 function getOrderDetails($orderId) {
     $conn = OpenCon();
 
-    $sql = "SELECT * FROM `Order` WHERE Order_ID = $orderId";
+    $sql = "SELECT * FROM `Order` WHERE Order_ID = '$orderId'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -53,7 +53,7 @@ function getOrderDetails($orderId) {
 function updateOrderStatus($orderId, $newStatus) {
     $conn = OpenCon();
 
-    $sql = "UPDATE `Order` SET Status = '$newStatus' WHERE Order_ID = $orderId";
+    $sql = "UPDATE `Order` SET Status = '$newStatus' WHERE Order_ID = '$orderId'";
     $conn->query($sql);
 
     CloseCon($conn);
@@ -317,7 +317,6 @@ echo"
 
                     $customerInfo = getCustomerInfo($orderId);
                     $orderItems = getOrderItems($orderId);
-                    $selectedPromotion = isset($_POST['promo']) ? $_POST['promo'] : null;
 
                     echo "<label for='promo'>Khuyến mãi, giảm giá:</label>";
                     echo "<select id='promo' name='promo'>";
