@@ -48,15 +48,15 @@
                     <div class="modal-body">
                             <div class="form-group">
                                 <label>Mã số nhân viên</label>
-                                <input class="form-control my-2" type="text" placeholder="NV01" name="maNhanVien" readonly />
+                                <input class="form-control my-2" type="text" placeholder="NV01" name="maNhanVien"  />
                             </div>
                             <div class="form-group">
                                 <label>Tên đăng nhập</label>
-                                <input class="form-control my-2" type="text" placeholder="user_0" name="tenDangNhap" readonly />
+                                <input class="form-control my-2" type="text" placeholder="user_0" name="tenDangNhap"  />
                             </div>
                             <div class="form-group">
                                 <label>Password</label>
-                                <input class="form-control my-2" type="text" placeholder="password123" name="password" readonly />
+                                <input class="form-control my-2" type="text" placeholder="password123" name="password"  />
                             </div>
                             <div class="form-group">
                                 <label>Tên nhân viên</label>
@@ -144,7 +144,7 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Đóng lại</button>
-                            <button class="btn btn-primary" type="submit">Thêm mới</button>
+                            <button class="btn btn-primary" type="submit" name="submit">Thêm mới</button>
                         </div>
                     </form>
                 </div>
@@ -206,7 +206,8 @@
                             <td class='align-middle'>
                                 <div class="d-inline-flex">
                                     <button type='button' class='btn-edit btn btn-primary m-1' value="<?php echo $row['Employee_ID'] ?>"  data-bs-target='#Edit' data-bs-toggle='modal'>Edit</button>
-                                    <button type='button' class='btn-delete btn btn-danger m-1' data-bs-tenDangNhap='<?php echo $row['Employee_ID'] ?>' data-bs-target='#Delete' data-bs-toggle='modal'>Delete</button>
+        
+                                        <button type='submit' class='btn-delete btn btn-danger m-1' data-bs-tenDangNhap='<?php echo $row['Employee_ID'] ?>' data-bs-target='#Delete' data-bs-toggle='modal'>Delete</button>
                                 </div>
                             </td>
                         </tr>
@@ -330,7 +331,7 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-primary btn-outline-light" type="button" data-bs-dismiss="modal">Đóng lại</button>
-                            <button class="btn btn-danger btn-outline-light" type="submit">Xác nhận</button>
+                            <button class="btn btn-danger btn-outline-light" type="submit" name="submit">Xác nhận</button>
                         </div>
                     </form>
                 </div>

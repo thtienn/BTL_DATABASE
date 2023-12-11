@@ -17,12 +17,14 @@
         $quanLy = $_POST['manager'];
         
         $conn = OpenCon();
-        $query = "CALL Add_new_employee('$maNhanVien', '$tenDangNhap', '$password', '$tenNhanVien', '$sdt', '$gioiTinh', '$ngaySinh', '$email', '$hopDong', '$mucLuong', '$viTri', '$cuaHang', '$quanLy');";
+        $query = "CALL Add_new_employee('$maNhanVien', '$tenDangNhap', '$password', '$tenNhanVien', '$sdt', '$gioitinh', '$ngaySinh', '$email', '$hopDong', '$mucLuong', '$viTri', '$cuaHang', '$quanLy');";
 
         if ($conn->query($query) === TRUE) {
             echo "New record created successfully";
             header('Location: index.php');
         } else {
+            echo"quametmoiroi";
+            echo $ngaySinh;
             echo "Error: " . $query . "<br>" . $conn->error;
             header('Location: index.php?err=' . $conn->error);
         }
