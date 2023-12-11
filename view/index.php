@@ -10,7 +10,7 @@
 
 <body>
     <?php
-    require_once(__DIR__ . '\db_connnconnnection.php');
+    require_once(__DIR__ . '\db_connnection.php');
 
     function getOrderList() {
         $conn = OpenCon();
@@ -126,7 +126,7 @@
 
                 <div class='row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3'>
                     <?php
-                    require_once('db_connection.php');
+                    require_once('db_connnection.php');
 
                     $conn = OpenCon();
                     $query = "SELECT * FROM Product;";
