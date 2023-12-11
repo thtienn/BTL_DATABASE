@@ -4,11 +4,63 @@
 <head>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <title>Bootstrap demo</title>
+    <title>F&B</title>
     <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65' crossorigin='anonymous'>
 </head>
 
 <body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        // Lấy tất cả các nút "Thêm vào giỏ hàng"
+        var addToCartButtons = document.querySelectorAll('.addToCartBtn');
+        // Gắn sự kiện click cho mỗi nút
+        addToCartButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                // Lấy ID của sản phẩm từ thuộc tính data
+                var productID = button.getAttribute('ProduceID');
+                // Gọi hàm thêm sản phẩm vào giỏ hàng
+                addToCart(productID);
+            });
+        });
+        function addToCart(productID) {
+            var userNote = prompt("Nhập ghi chú (nếu có):");
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'get_product_info.php?productID=' + productID, true);
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    var productInfo = JSON.parse(xhr.responseText);
+                    addToOrder(productInfo, userNote);
+                } else {
+                    console.error('Yêu cầu thất bại. Mã lỗi: ' + xhr.status);
+                }
+            };
+            xhr.onerror = function () {
+                console.error('Có lỗi khi kết nối đến máy chủ.');
+            };
+            xhr.send();
+        }
+
+        function addToOrder(productInfo, userNote) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'add_to_order.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    var response = xhr.responseText;
+                    console.log('Phản hồi từ máy chủ:', response);
+                    alert('Sản phẩm đã được thêm vào giỏ hàng!');
+                } else {
+                    console.error('Yêu cầu thất bại. Mã lỗi: ' + xhr.status);
+                }
+            };
+            xhr.onerror = function () {
+                console.error('Có lỗi khi kết nối đến máy chủ.');
+            };
+            var data = 'productID=' + productInfo.Product_ID + '&Name=' + productInfo.Name + '&price=' + productInfo.Price + '&userNote=' + userNote;
+            xhr.send(data);
+        }
+    });
+</script>
     <main>
 
         <section class='py-5 text-center container'>
@@ -17,7 +69,7 @@
                     <h1 class='fw-light'>Trang bán hàng chính</h1>
                     <p class='lead text-muted'>Ở đây sẽ liệt kê các sản phẩm chính của trang web, bao gồm cả ảnh vào nhà hàng đang chế biến nó</p>
                     <p>
-                        <a href='#' class='btn btn-primary my-2'>Đến giỏ hàng</a>
+                        <a href='../cart2' class='btn btn-primary my-2'>Đến giỏ hàng</a>
                         <a href='../' class='btn btn-secondary my-2'>Trở lại đăng nhập</a>
                     </p>
                 </div>
@@ -48,18 +100,22 @@
                             $result1 = $conn->query($query);
                             $result2 = $result1->fetch_assoc()['Photo'];
                             
-                            echo "<div class='col'>
+                            echo"<div class='col'>
                         <div class='card shadow-sm'>
                             <img src='$result2' alt=''>
 
                             <div class='card-body'>
-                                <h4 class='card-title'>$tenMonAn</h4>
-                                <p class='card-text'>$moTaMonan</p>
+                                <h4 class='card-title'>$Name</h4>
+                                <p class='card-text'>$Description</p>
                                 <div class='d-flex justify-content-between align-items-center'>
                                     <div class='btn-group'>
-                                        <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?maMonAn=$maMonAn'>View</a></button>
+                                        <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?maMonAn=$maMonAn'>Xem</a></button>
+                                        
                                     </div>
-                                    <div class='text-muted text-bold align-middle'>Giá: $giaNiemYet Đ</div>
+                                    <div>
+                                        <button /*onclick=\"addToCart($Name,$Price)\"*/ class='btn btn-outline-secondary-1'>Thêm vào giỏ hàng</button>
+                                    </div>
+                                    <div class='text-muted text-bold align-middle'>Giá: $Price Đ</div>
                                 </div>
                             </div>
                         </div>
@@ -83,18 +139,22 @@
                             $result1 = $conn->query($query);
                             $result2 = $result1->fetch_assoc()['Photo'];
                             
-                            echo "<div class='col'>
+                           echo"<div class='col'>
                         <div class='card shadow-sm'>
                             <img src='$result2' alt=''>
 
                             <div class='card-body'>
-                                <h4 class='card-title'>$tenMonAn</h4>
-                                <p class='card-text'>$moTaMonan</p>
+                                <h4 class='card-title'>$Name</h4>
+                                <p class='card-text'>$Description</p>
                                 <div class='d-flex justify-content-between align-items-center'>
                                     <div class='btn-group'>
-                                        <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?maMonAn=$maMonAn'>View</a></button>
+                                        <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?maMonAn=$maMonAn'>Xem</a></button>
+                                        
                                     </div>
-                                    <div class='text-muted text-bold align-middle'>Giá: $giaNiemYet Đ</div>
+                                    <div>
+                                        <button /*onclick=\"addToCart($Produce_ID)\"*/ class='btn btn-outline-secondary-1'>Thêm vào giỏ hàng</button>
+                                    </div>
+                                    <div class='text-muted text-bold align-middle'>Giá: $Price Đ</div>
                                 </div>
                             </div>
                         </div>
