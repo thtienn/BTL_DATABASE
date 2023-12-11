@@ -1720,49 +1720,76 @@ DELIMITER ;
 
 
 -- Display order detail
-DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ShowOrderDetail` (IN `billID` VARCHAR(256))   BEGIN
+    DECLARE tempProductTableExists INT;
+    DECLARE tempComboTableExists INT;
 
-CREATE PROCEDURE ShowOrderDetail(IN billID VARCHAR(256))
-BEGIN
-    -- Declare variables to store order details
-    DECLARE orderID INT;
-    DECLARE orderDate DATE;
-    DECLARE customerName VARCHAR(255);
+    -- Check if the temporary table exists
+    SELECT COUNT(*)
+    INTO tempProductTableExists
+    FROM information_schema.tables
+    WHERE table_name = 'ProductInOrder';
 
-    -- Fetch order details based on the provided bill ID
-    SELECT o.Order_ID, o.Order_Date, c.Name
-    INTO orderID, orderDate, customerName
-    FROM `Order` o
-    JOIN Customer c ON o.Customer_ID = c.Customer_ID
-    JOIN Bill b ON o.Order_ID = b.Order_ID
-    WHERE b.Bill_ID = billID;
+    SELECT COUNT(*)
+    INTO tempComboTableExists
+    FROM information_schema.tables
+    WHERE table_name = 'ComboInOrder';
 
-    -- Display order details
-    SELECT 'Order ID' AS Label, orderID AS Value;
-    SELECT 'Order Date' AS Label, orderDate AS Value;
-    SELECT 'Customer Name' AS Label, customerName AS Value;
-    
-    -- Display order lines for the given order ID (products)
-   SELECT 'Products' AS ItemType, p.Product_ID, p.Name, p.Price, ol.Quantity, ol.Total_Price
-    FROM Order_Line ol
+    IF tempProductTableExists  > 0 THEN
+        -- Drop the temporary table
+        DROP TEMPORARY TABLE ProductInOrder;
+    END IF;
+
+    IF tempComboTableExists > 0 THEN
+        -- Drop the temporary table
+        DROP TEMPORARY TABLE ComboInOrder;
+    END IF;
+
+    CREATE TEMPORARY TABLE IF NOT EXISTS ProductInOrder (
+        ProductID VARCHAR(256),
+        ProductName VARCHAR(255),
+        ProductPrice DECIMAL (10,2),
+        OnCartQuantity INT,
+        TotalPrice DECIMAL(10,2)
+    );
+
+    CREATE TEMPORARY TABLE IF NOT EXISTS ComboInOrder (
+        ComboID VARCHAR(256),
+        ComboName VARCHAR(255),
+        ComboPrice DECIMAL (10,2),
+        OnCartQuantity INT,
+        TotalPrice DECIMAL(10,2)
+    );
+
+    INSERT INTO ProductInOrder (ProductID, ProductName, ProductPrice, OnCartQuantity, TotalPrice)
+    SELECT p.Product_ID, p.Name, p.Price, ol.Quantity, ol.Total_Price
+    FROM Bill b
+    JOIN Order_Line ol ON b.Order_ID = ol.Order_ID
     JOIN Item i ON ol.Item_ID = i.Item_ID
     JOIN Product p ON i.Product_ID = p.Product_ID
-    WHERE ol.Order_ID = orderID AND i.Combo_ID IS NULL;
+    WHERE b.Bill_ID = billID;
 
-    -- Display order lines for the given order ID (combos)
-    SELECT 'Combos' AS ItemType, c.Combo_ID, c.Name, c.Price, ol.Quantity, ol.Total_Price
-    FROM Order_Line ol
+    INSERT INTO ComboInOrder (ComboID, ComboName, ComboPrice, OnCartQuantity, TotalPrice)
+    SELECT c.Combo_ID, c.Name, c.Price, ol.Quantity, ol.Total_Price
+    FROM Bill b
+    JOIN Order_Line ol ON b.Order_ID = ol.Order_ID
     JOIN Item i ON ol.Item_ID = i.Item_ID
     JOIN Combo c ON i.Combo_ID = c.Combo_ID
-    WHERE ol.Order_ID = orderID AND i.Combo_ID IS NOT NULL;
-END $$
+    WHERE b.Bill_ID = billID;
 
-DELIMITER ;
+    SELECT * FROM `ProductInOrder`
+    UNION ALL
+    SELECT * FROM `ComboInOrder`;
+
+    DROP TEMPORARY TABLE IF EXISTS ProductInOrder;
+    DROP TEMPORARY TABLE IF EXISTS ComboInOrder;
+
+
+END$$
 
 -- Display branches having total salary of employees greater than x value
 DELIMITER $$
-
-CREATE PROCEDURE FilterTotalSalary(IN salaryThreshold DECIMAL(10, 2))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `FilterTotalSalary`(IN salaryThreshold DECIMAL(10, 2))
 BEGIN
     DECLARE tempTableExists INT;
     DECLARE tempIncomeTableExists INT;
@@ -1809,20 +1836,18 @@ BEGIN
     INSERT INTO BranchTotalIncome (BranchID, TotalIncome)
     SELECT Branch_ID, SUM(b.Total_Price)
     FROM Order o 
-    JOIN Bill b ON o.Bill_ID = b.Bill_ID
+    JOIN Bill b ON o.Order_ID = b.Order_ID
     GROUP BY o.Branch_ID;
 
     -- Display branches where the total salary is greater than the specified value
     SELECT b.Branch_ID, b.Name, b.Province, b.District, b.Ward, b.Street, ts.TotalSalary, inc.TotalIncome
     FROM Branch b
     JOIN BranchTotalSalary ts ON b.Branch_ID = ts.BranchID
-    JOIN BranchTotalIncome inc ON b.Branch_ID = inc.Branch_ID
+    JOIN BranchTotalIncome inc ON b.Branch_ID = inc.BranchID
     WHERE ts.TotalSalary > salaryThreshold;
 
     -- Drop the temporary table
     DROP TEMPORARY TABLE IF EXISTS BranchTotalSalary;
     DROP TEMPORARY TABLE IF EXISTS BranchTotalIncome;
-END $$
-
+END$$
 DELIMITER ;
-
