@@ -11,60 +11,28 @@
 
 <body class=''>
     <main class='main-content w-100 m-auto'>
+        
         <?php
-        if (isset($_GET['maMonAn'])) {
+        if (isset($_GET['Produce_ID'])) {
             require_once('db_connnection.php');
 
             $conn = OpenCon();
-            $maMonAn = $_GET['maMonAn'];
-            $query = "SELECT * FROM `Product` WHERE Product_ID = '$maMonAn';";
+            $maMonAn = $_GET['Produce_ID'];
+            $query = "SELECT * FROM Produce WHERE Product_ID = '$maMonAn';";
 
             $result = $conn->query($query);
 
             if ($result->num_rows > 0) {
                 // OUTPUT DATA OF EACH ROW
                 while ($row = $result->fetch_assoc()) {
-                    $maMonAn = $row['maMonAn'];
-                    $query = "SELECT * FROM `mon_an_thuoc_nhom` WHERE maMonAn = '$maMonAn';";
+                    $maMonAn = $row['Product_ID'];
+                    $tenMonAn = $row['Name'];
+                    $moTaMonan = $row['Description'];
+                    $giaNiemYet = $row['Price'];
+                    $query = "SELECT * FROM `Product` WHERE Product_ID = '$maMonAn';";
 
                     $result1 = $conn->query($query);
-                    $result2 = $result1->fetch_assoc()['maNhomMonAn'];
-
-                    $query1 = "SELECT * FROM `nhom_mon_an` WHERE maNhomMonAn = '$result2';";
-                    $result3 = $conn->query($query1);
-                    $result4 = $result3->fetch_assoc()['tenNhomMonAn'];
-                    $result3 = $conn->query($query1);
-                    $result5 = $result3->fetch_assoc()['moTaNhomMonAn'];
-
-                    echo "<div>
-                    <h3>$result4</h3>
-                    <p>$result5</p>
-                </div>";
-                }
-            }
-        }
-        ?>
-        <?php
-        if (isset($_GET['maMonAn'])) {
-            require_once('db_connnection.php');
-
-            $conn = OpenCon();
-            $maMonAn = $_GET['maMonAn'];
-            $query = "SELECT * FROM `mon_an` WHERE maMonAn = '$maMonAn';";
-
-            $result = $conn->query($query);
-
-            if ($result->num_rows > 0) {
-                // OUTPUT DATA OF EACH ROW
-                while ($row = $result->fetch_assoc()) {
-                    $maMonAn = $row['maMonAn'];
-                    $tenMonAn = $row['tenMonAn'];
-                    $moTaMonan = $row['moTaMonan'];
-                    $giaNiemYet = $row['giaNiemYet'];
-                    $query = "SELECT * FROM `anh_mon_an` WHERE maMonAn = '$maMonAn';";
-
-                    $result1 = $conn->query($query);
-                    $result2 = $result1->fetch_assoc()['anhMonAn'];
+                    $result2 = $result1->fetch_assoc()['Photo'];
 
                     echo "<div class='card'>
                 <img src='$result2' class='card-img-top' alt=''>
