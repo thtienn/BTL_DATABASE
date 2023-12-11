@@ -205,7 +205,7 @@
                             <td class='align-middle'><?php echo $row['Branch_ID'] ?></td>
                             <td class='align-middle'>
                                 <div class="d-inline-flex">
-                                    <button type='button' class='btn-edit btn btn-primary m-1' data-bs-id="<?php echo $row['Employee_ID'] ?>"  data-bs-target='#Edit' data-bs-toggle='modal'>Edit</button>
+                                    <button type='button' class='btn-edit btn btn-primary m-1' data-bs-idAddr='<?php echo $row['Employee_ID'] ?>'  data-bs-target='#Edit' data-bs-toggle='modal'>Edit</button>
         
                                         <button type='submit' class='btn-delete btn btn-danger m-1' data-bs-tenDangNhap='<?php echo $row['Employee_ID'] ?>' data-bs-target='#Delete' data-bs-toggle='modal'>Delete</button>
                                 </div>
@@ -239,7 +239,7 @@
 
                             <div class="form-group" style="margin-bottom: 2px;">
                                 <label>Giới tính</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select name="gioiTinh" class="form-select" aria-label="Default select example">
                                     <option selected>Chọn giới tính</option>
                                     <option value="M">Nam</option>
                                     <option value="F">Nữ</option>
@@ -266,7 +266,7 @@
                             
                             <div class="form-group" style="margin-bottom: 2px;">
                                 <label>Vị trí</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select name="work-position" class="form-select" aria-label="Default select example">
                                     <option selected>Chọn vị trí công việc</option>
                                     <option value="Manager">Manager</option>
                                     <option value="Cashier">Cashier</option>
@@ -275,7 +275,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Cửa hàng</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select name="store" class="form-select" aria-label="Default select example">
                                     <option selected>Chọn cửa hàng</option>
                                     <?php
                                         $queryBranch = "SELECT * FROM `Branch`;";
@@ -292,7 +292,7 @@
 
                             <div class="form-group">
                                 <label>Quản lý</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select name="manager" class="form-select" aria-label="Default select example">
                                     <option selected>Chọn quản lý</option>
                                     <?php
                                         $queryBranch = "SELECT * FROM `Employee` WHERE Job_Type = 'Manager';";
@@ -310,7 +310,7 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Đóng lại</button>
-                            <button class="btn btn-primary" type="submit" name="submit" value="id">Cập nhật</button>
+                            <button class="btn btn-primary" type="submit" name="submit" value="idAddr">Cập nhật</button>
                         </div>
                     </form>
                 </div>
