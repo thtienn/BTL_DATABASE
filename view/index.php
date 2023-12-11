@@ -9,58 +9,103 @@
 </head>
 
 <body>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        // Lấy tất cả các nút "Thêm vào giỏ hàng"
-        var addToCartButtons = document.querySelectorAll('.addToCartBtn');
-        // Gắn sự kiện click cho mỗi nút
-        addToCartButtons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                // Lấy ID của sản phẩm từ thuộc tính data
-                var productID = button.getAttribute('ProduceID');
-                // Gọi hàm thêm sản phẩm vào giỏ hàng
-                addToCart(productID);
-            });
-        });
-        function addToCart(productID) {
-            var userNote = prompt("Nhập ghi chú (nếu có):");
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'get_product_info.php?productID=' + productID, true);
-            xhr.onload = function () {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    var productInfo = JSON.parse(xhr.responseText);
-                    addToOrder(productInfo, userNote);
-                } else {
-                    console.error('Yêu cầu thất bại. Mã lỗi: ' + xhr.status);
-                }
-            };
-            xhr.onerror = function () {
-                console.error('Có lỗi khi kết nối đến máy chủ.');
-            };
-            xhr.send();
+    <?php
+    require_once('db_connection.php');
+
+    function getOrderList() {
+        $conn = OpenCon();
+
+        $query = "SELECT Order_ID, Status FROM `Order` WHERE Status = 'PROCESSING';";
+        $result = $conn->query($query);
+
+        $orderList = array();
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $orderList[] = $row['Order_ID'];
+            }
         }
 
-        function addToOrder(productInfo, userNote) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'add_to_order.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function () {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    var response = xhr.responseText;
-                    console.log('Phản hồi từ máy chủ:', response);
-                    alert('Sản phẩm đã được thêm vào giỏ hàng!');
+        CloseCon($conn);
+
+        return $orderList;
+    }
+
+    $orderList = getOrderList();
+    ?>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var addToCartButtons = document.querySelectorAll('.addToCartBtn');
+
+            addToCartButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var productID = button.getAttribute('ProduceID');
+                    addToCart(productID);
+                });
+            });
+
+            function addToCart(productID) {
+                var userNote = prompt("Nhập ghi chú (nếu có):");
+                var selectedOrder = prompt('Chọn đơn hàng:', '<?php echo implode("', '", $orderList); ?>');
+
+                if (selectedOrder && <?php echo in_array($selectedOrder, $orderList) ? 'true' : 'false'; ?>) {
+                    addProductToExistingOrder(productID, userNote, selectedOrder);
                 } else {
-                    console.error('Yêu cầu thất bại. Mã lỗi: ' + xhr.status);
+                    var createNewOrder = confirm('Bạn muốn tạo đơn hàng mới?');
+                    if (createNewOrder) {
+                        createNewOrderAndAddProduct(productID, userNote);
+                    } else {
+                        alert('Sản phẩm không được thêm vào đơn hàng.');
+                    }
                 }
-            };
-            xhr.onerror = function () {
-                console.error('Có lỗi khi kết nối đến máy chủ.');
-            };
-            var data = 'productID=' + productInfo.Product_ID + '&Name=' + productInfo.Name + '&price=' + productInfo.Price + '&userNote=' + userNote;
-            xhr.send(data);
-        }
-    });
-</script>
+            }
+
+            function addProductToExistingOrder(productID, userNote, selectedOrder) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'add_to_order.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                xhr.onload = function () {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        var response = xhr.responseText;
+                        console.log('Phản hồi từ máy chủ:', response);
+                        alert('Sản phẩm đã được thêm vào giỏ hàng!');
+                    } else {
+                        console.error('Yêu cầu thất bại. Mã lỗi: ' + xhr.status);
+                    }
+                };
+
+                xhr.onerror = function () {
+                    console.error('Có lỗi khi kết nối đến máy chủ.');
+                };
+
+                var data = 'productID=' + productID + '&userNote=' + userNote + '&selectedOrder=' + selectedOrder;
+                xhr.send(data);
+            }
+
+            function createNewOrderAndAddProduct(productID, userNote) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'create_new_order.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                xhr.onload = function () {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        var newOrderID = xhr.responseText;
+                        addProductToExistingOrder(productID, userNote, newOrderID);
+                    } else {
+                        console.error('Yêu cầu thất bại. Mã lỗi: ' + xhr.status);
+                    }
+                };
+
+                xhr.onerror = function () {
+                    console.error('Có lỗi khi kết nối đến máy chủ.');
+                };
+
+                xhr.send();
+            }
+        });
+    </script>
     <main>
 
         <section class='py-5 text-center container'>
@@ -113,7 +158,7 @@
                                         
                                     </div>
                                     <div>
-                                        <button /*onclick=\"addToCart($Name,$Price)\"*/ class='btn btn-outline-secondary-1'>Thêm vào giỏ hàng</button>
+                                        <button onclick="addToOrder('<?php echo $productName; ?>', <?php echo $productPrice; ?>)">Thêm vào đơn hàng</button>
                                     </div>
                                     <div class='text-muted text-bold align-middle'>Giá: $Price Đ</div>
                                 </div>
@@ -152,7 +197,7 @@
                                         
                                     </div>
                                     <div>
-                                        <button /*onclick=\"addToCart($Produce_ID)\"*/ class='btn btn-outline-secondary-1'>Thêm vào giỏ hàng</button>
+                                        <button onclick="addToOrder('<?php echo $productName; ?>', <?php echo $productPrice; ?>)">Thêm vào đơn hàng</button>
                                     </div>
                                     <div class='text-muted text-bold align-middle'>Giá: $Price Đ</div>
                                 </div>
