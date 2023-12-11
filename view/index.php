@@ -154,7 +154,7 @@
             <p class='card-text'>$moTaMonan</p>
             <div class='d-flex justify-content-between align-items-center'>
                 <div class='btn-group'>
-                    <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?maMonAn=$maMonAn'>Xem</a></button>
+                    <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?Produce_ID=$maMonAn'>Xem</a></button>
                 </div>
                 <div>
                     <button onclick=\"addToCart('$tenMonAn', $giaNiemYet)\">Thêm vào đơn hàng</button>
@@ -192,7 +192,7 @@
                                     <p class='card-text'>$moTaMonan</p>
                                     <div class='d-flex justify-content-between align-items-center'>
                                         <div class='btn-group'>
-                                            <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?maMonAn=$maMonAn'>Xem</a></button>
+                                            <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?Produce_ID=$maMonAn'>Xem</a></button>
                                         </div>
                                         <div>
                                             <button onclick=\"addToCart('$tenMonAn', $giaNiemYet)\">Thêm vào đơn hàng</button>
