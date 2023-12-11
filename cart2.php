@@ -1,10 +1,10 @@
 <?php
-require_once('db_connection.php');
+require_once('db_connnection.php');
 
 function getCustomerInfo($customerId) {
     $conn = OpenCon();
 
-    $sql = "SELECT * FROM Customer WHERE Customer_ID = $customerId";
+    $sql = "SELECT * FROM `Customer` WHERE Customer_ID = $customerId";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -20,7 +20,7 @@ function getCustomerInfo($customerId) {
 function getOrderItems($orderId) {
     $conn = OpenCon();
 
-    $sql = "SELECT * FROM OrderItems WHERE Order_ID = $orderId";
+    $sql = "SELECT * FROM `Order` WHERE Order_ID = $orderId";
     $result = $conn->query($sql);
 
     $orderItems = [];
@@ -50,7 +50,6 @@ function getOrderDetails($orderId) {
     }
 }
 
-
 function updateOrderStatus($orderId, $newStatus) {
     $conn = OpenCon();
 
@@ -77,9 +76,7 @@ function calculateTotalBill($orderId, $promotionId = null) {
 }
 
 function cancelOrder($orderId) {
-    // Hàm này sẽ được gọi khi người dùng muốn hủy đơn hàng
-
-    // Lấy thông tin chi tiết đơn hàng
+    
     $orderDetails = getOrderDetails($orderId);
 
     if ($orderDetails) {
@@ -201,8 +198,7 @@ function getPhoneNumbers() {
 }
 
 $conn = OpenCon();
-
-echo "
+echo"
 <!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -289,153 +285,172 @@ echo "
 </head>
 <body>
     <div id='cart'>";
+        $conn = OpenCon();
+        $sql = "SELECT * FROM `Order`";
+        $result = $conn->query($sql);
 
-$sql = "SELECT * FROM `Order`";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        echo "<div class='order' onclick='viewOrderDetails(" . $row['Order_ID'] . ")'>";
-        echo "<p>OrderID: <span>" . $row['Order_ID'] . "</span></p>";
-       
-        echo "</div>";
-    }
-} else {
-    echo "0 results";
-}
-
-echo "</div>";
-
-CloseCon($conn);
-
-?>
-
-<div id="orderDetailsModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Thông tin đơn hàng</h2>
-        <form id="orderDetailsForm">
-            <input type="hidden" name="viewOrder" value="true">
-            <?php
-            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['viewOrder'])) {
-                $orderId = $_POST['Order_ID'];
-                $orderStatus = $_POST['Status'];
-
-                $customerInfo = getCustomerInfo($orderId);
-                $orderItems = getOrderItems($orderId);
-                $selectedPromotion = isset($_POST['promo']) ? $_POST['promo'] : null;
-
-                echo "<label for='promo'>Khuyến mãi, giảm giá:</label>";
-                echo "<select id='promo' name='promo'>";
-
-                $conn = OpenCon();
-                $sqlPromotions = "SELECT Name, Discount_Value, Discount_Method FROM Promotion";
-                $resultPromotions = $conn->query($sqlPromotions);
-
-                if ($resultPromotions->num_rows > 0) {
-                    while ($rowPromo = $resultPromotions->fetch_assoc()) {
-                        $selected = ($rowPromo['Name'] == $selectedPromotion) ? 'selected' : '';
-                        echo "<option value='" . $rowPromo['Name'] . "' $selected>";
-                        echo $rowPromo['Name'] . " - ";
-                        echo "Giá trị giảm: " . $rowPromo['Discount_Value'] . "% ";
-                        echo "Hình thức: " . $rowPromo['Discount_Method'] . " ";
-                        echo "</option>";
-                    }
-                } else {
-                    echo "<option value=''>Không có chương trình khuyến mãi</option>";
-                }
-                echo "</select>";
-                CloseCon();
-
-                echo "<label for='delivery'>Đơn vị vận chuyển:</label>";
-                echo "<select id='delivery' name='delivery'>";
-                echo "<option value='" . $customerInfo['Delivery_ID'] . "'>" . $customerInfo['Name'] . " - Freight: $" . $customerInfo['Freight'] . "</option>";
-
-                $conn = OpenCon();
-                $sqlDeliveries = "SELECT Delivery_ID, Name, Freight FROM Delivery";
-                $resultDeliveries = $conn->query($sqlDeliveries);
-
-                if ($resultDeliveries->num_rows > 0) {
-                    while ($rowDelivery = $resultDeliveries->fetch_assoc()) {
-                        echo "<option value='" . $rowDelivery['Delivery_ID'] . "'>" . $rowDelivery['Name'] . " - Freight: $" . $rowDelivery['Freight'] . "</option>";
-                    }
-                } else {
-                    echo "<option value=''>Không có đơn vị vận chuyển hỗ trợ</option>";
-                }
-                echo "</select>";
-                CloseCon();
-
-                echo "<label for='paymentMethod'>Phương thức thanh toán:</label>";
-                echo "<select id='paymentMethod' name='paymentMethod'>";
-                echo "<option value='CASH'>CASH</option>";
-                echo "<option value='MOMO'>MOMO</option>";
-                echo "<option value='BANKING'>BANKING</option>";
-                echo "</select>";
-
-                $provinces = getProvinces();
-                $districts = getDistricts($selectedProvince); 
-                $wards = getWards($selectedProvince, $selectedDistrict); 
-                $streets = getStreets($selectedProvince, $selectedDistrict, $selectedWard);
-
-                echo "<label for='province'>Thành phố:</label>";
-                echo "<select id='province' name='province'>";
-                foreach ($provinces as $province) {
-                    echo "<option value='$province'>$province</option>";
-                }
-                echo "</select>";
-
-                echo "<label for='district'>District:</label>";
-                echo "<select id='district' name='district'>";
-                foreach ($districts as $district) {
-                    echo "<option value='$district'>$district</option>";
-                }
-                echo "</select>";
-
-                echo "<label for='ward'>Ward:</label>";
-                echo "<select id='ward' name='ward'>";
-                foreach ($wards as $ward) {
-                    echo "<option value='$ward'>$ward</option>";
-                }
-                echo "</select>";
-
-                echo "<label for='street'>Street:</label>";
-                echo "<select id='street' name='street'>";
-                foreach ($streets as $street) {
-                    echo "<option value='$street'>$street</option>";
-                }
-                echo "</select>";
-
-                $phoneNumbers = getPhoneNumbers();
-
-                echo "<label for='phone'>Phone:</label>";
-                echo "<select id='phone' name='phone'>";
-                foreach ($phoneNumbers as $phoneNumber) {
-                    echo "<option value='$phoneNumber'>$phoneNumber</option>";
-                }
-                echo "</select>";
-
-                $totalBill = calculateTotalBill($orderId, $selectedPromotion);
-
-                echo "<p>Total Price: <span>" . $totalBill . "</span></p>";
-                
-                if ($orderStatus === "Confirmed") {
-                    echo "<button type='button' onclick='completeOrder()'>Thanh toán</button>";
-                }
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<button class='order-btn' data-order-id='" . $row['Order_ID'] . "'>";
+                echo "Đơn hàng #" . $row['Order_ID'];
+                echo "</button>";
             }
-            ?>
-            <button type="button" onclick="cancelOrder()">Hủy đơn hàng</button>
-            <button type="button" onclick="confirmOrder()">Xác nhận đơn hàng</button>
-            <button type="button" onclick="closeModal()">Đóng</button>
-        </form>
-    </div>
-</div>
+        } else {
+            echo "0 results";
+        }
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script>
-    function viewOrderDetails(orderId) {
-        console.log('Thông tin đơn hàng', orderId);
-        document.getElementById('orderDetailsModal').style.display = 'block';
-    }
-</script>
+        CloseCon($conn);
+        ?>
+    </div>
+
+    <div id='orderDetailsModal' class='modal'>
+        <div class='modal-content'>
+            <span class='close' onclick='closeModal()'>&times;</span>
+            <h2>Thông tin đơn hàng</h2>
+            <form id='orderDetailsForm' method='post' >
+                <input type='hidden' name='Order_ID' value='$orderId'>
+
+                <?php
+                if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Order_ID'])) {
+                    $orderId = $_POST['Order_ID'];
+                    $orderStatus = $_POST['Status'];
+
+                    $customerInfo = getCustomerInfo($orderId);
+                    $orderItems = getOrderItems($orderId);
+                    $selectedPromotion = isset($_POST['promo']) ? $_POST['promo'] : null;
+
+                    echo "<label for='promo'>Khuyến mãi, giảm giá:</label>";
+                    echo "<select id='promo' name='promo'>";
+
+                    $conn = OpenCon();
+                    $sqlPromotions = "SELECT Name, Discount_Value, Discount_Method FROM Promotion";
+                    $resultPromotions = $conn->query($sqlPromotions);
+
+                    if ($resultPromotions->num_rows > 0) {
+                        while ($rowPromo = $resultPromotions->fetch_assoc()) {
+                            $selected = ($rowPromo['Name'] == $selectedPromotion) ? 'selected' : '';
+                            echo "<option value='" . $rowPromo['Name'] . "' $selected>";
+                            echo $rowPromo['Name'] . " - ";
+                            echo "Giá trị giảm: " . $rowPromo['Discount_Value'] . "% ";
+                            echo "Hình thức: " . $rowPromo['Discount_Method'] . " ";
+                            echo "</option>";
+                        }
+                    } else {
+                        echo "<option value=''>Không có chương trình khuyến mãi</option>";
+                    }
+                    echo "</select>";
+                    CloseCon();
+
+                    echo "<h3>Chi tiết đơn hàng</h3>";
+                    if (!empty($orderItems)) {
+                        echo "<ul>";
+                        foreach ($orderItems as $item) {
+                            echo "<li>{$item['Product_Name']} - Quantity: {$item['Quantity']} - Price: {$item['Price']}</li>";
+                        }
+                        echo "</ul>";
+                    } else {
+                        echo "<p>Không có sản phẩm trong đơn hàng.</p>";
+                    }
+
+                    echo "<label for='delivery'>Đơn vị vận chuyển:</label>";
+                    echo "<select id='delivery' name='delivery'>";
+                    echo "<option value='" . $customerInfo['Delivery_ID'] . "'>" . $customerInfo['Name'] . " - Freight: $" . $customerInfo['Freight'] . "</option>";
+
+                    $conn = OpenCon();
+                    $sqlDeliveries = "SELECT Delivery_ID, Name, Freight FROM Delivery";
+                    $resultDeliveries = $conn->query($sqlDeliveries);
+
+                    if ($resultDeliveries->num_rows > 0) {
+                        while ($rowDelivery = $resultDeliveries->fetch_assoc()) {
+                            echo "<option value='" . $rowDelivery['Delivery_ID'] . "'>" . $rowDelivery['Name'] . " - Freight: $" . $rowDelivery['Freight'] . "</option>";
+                        }
+                    } else {
+                        echo "<option value=''>Không có đơn vị vận chuyển hỗ trợ</option>";
+                    }
+                    echo "</select>";
+                    CloseCon();
+
+                    echo "<label for='paymentMethod'>Phương thức thanh toán:</label>";
+                    echo "<select id='paymentMethod' name='paymentMethod'>";
+                    echo "<option value='CASH'>CASH</option>";
+                    echo "<option value='MOMO'>MOMO</option>";
+                    echo "<option value='BANKING'>BANKING</option>";
+                    echo "</select>";
+
+                    $provinces = getProvinces();
+                    $districts = getDistricts($selectedProvince); 
+                    $wards = getWards($selectedProvince, $selectedDistrict); 
+                    $streets = getStreets($selectedProvince, $selectedDistrict, $selectedWard);
+
+                    echo "<label for='province'>Thành phố:</label>";
+                    echo "<select id='province' name='province'>";
+                    foreach ($provinces as $province) {
+                        echo "<option value='$province'>$province</option>";
+                    }
+                    echo "</select>";
+
+                    echo "<label for='district'>District:</label>";
+                    echo "<select id='district' name='district'>";
+                    foreach ($districts as $district) {
+                        echo "<option value='$district'>$district</option>";
+                    }
+                    echo "</select>";
+
+                    echo "<label for='ward'>Ward:</label>";
+                    echo "<select id='ward' name='ward'>";
+                    foreach ($wards as $ward) {
+                        echo "<option value='$ward'>$ward</option>";
+                    }
+                    echo "</select>";
+
+                    echo "<label for='street'>Street:</label>";
+                    echo "<select id='street' name='street'>";
+                    foreach ($streets as $street) {
+                        echo "<option value='$street'>$street</option>";
+                    }
+                    echo "</select>";
+
+                    $phoneNumbers = getPhoneNumbers();
+
+                    echo "<label for='phone'>Phone:</label>";
+                    echo "<select id='phone' name='phone'>";
+                    foreach ($phoneNumbers as $phoneNumber) {
+                        echo "<option value='$phoneNumber'>$phoneNumber</option>";
+                    }
+                    echo "</select>";
+
+                    $totalBill = calculateTotalBill($orderId, $selectedPromotion);
+
+                    echo "<p>Total Price: <span>" . $totalBill . "</span></p>";
+
+                    if ($orderStatus === "Confirmed") {
+                        echo "<button type='button' onclick='completeOrder()'>Thanh toán</button>";
+                    }
+                }
+                ?>
+                <button type="button" onclick="cancelOrder()">Hủy đơn hàng</button>
+                <button type="button" onclick="confirmOrder()">Xác nhận đơn hàng</button>
+                <button type="button" onclick="closeModal()">Đóng</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+        $('.order-btn').on('click', function() {
+            var $orderId = $(this).data('Order_ID');
+            viewOrderDetails($orderId);
+        });
+
+        function viewOrderDetails($orderId) {
+            console.log('Thông tin đơn hàng #', $orderId);
+
+            $('#orderDetailsForm input[name="Order_ID"]').val($orderId);
+      
+            document.getElementById('orderDetailsModal').style.display = 'block';
+        }
+    });
+    </script>
 </body>
-</html>
+</html> 
