@@ -205,7 +205,7 @@
                             <td class='align-middle'><?php echo $row['Branch_ID'] ?></td>
                             <td class='align-middle'>
                                 <div class="d-inline-flex">
-                                    <button type='button' class='btn-edit btn btn-primary m-1' value="<?php echo $row['Employee_ID'] ?>"  data-bs-target='#Edit' data-bs-toggle='modal'>Edit</button>
+                                    <button type='button' class='btn-edit btn btn-primary m-1' data-bs-id="<?php echo $row['Employee_ID'] ?>"  data-bs-target='#Edit' data-bs-toggle='modal'>Edit</button>
         
                                         <button type='submit' class='btn-delete btn btn-danger m-1' data-bs-tenDangNhap='<?php echo $row['Employee_ID'] ?>' data-bs-target='#Delete' data-bs-toggle='modal'>Delete</button>
                                 </div>
@@ -310,7 +310,7 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Đóng lại</button>
-                            <button class="btn btn-primary" type="submit">Cập nhật</button>
+                            <button class="btn btn-primary" type="submit" name="submit" value="id">Cập nhật</button>
                         </div>
                     </form>
                 </div>
