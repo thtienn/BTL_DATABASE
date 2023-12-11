@@ -114,7 +114,7 @@
                     <h1 class='fw-light'>Trang bán hàng chính</h1>
                     <p class='lead text-muted'>Ở đây sẽ liệt kê các sản phẩm chính của trang web, bao gồm cả ảnh vào nhà hàng đang chế biến nó</p>
                     <p>
-                        <a href='../cart2' class='btn btn-primary my-2'>Đến giỏ hàng</a>
+                        <a href='../cart2.php' class='btn btn-primary my-2'>Đến giỏ hàng</a>
                         <a href='../' class='btn btn-secondary my-2'>Trở lại đăng nhập</a>
                     </p>
                 </div>
