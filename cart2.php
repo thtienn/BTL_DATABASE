@@ -192,6 +192,10 @@ function getPhoneNumbers() {
 }
 
 $conn = OpenCon();
+session_start(); 
+$customerId = $_SESSION['customerId'];
+
+
 echo"
 <!DOCTYPE html>
 <html lang='en'>
@@ -280,7 +284,7 @@ echo"
 <body>
     <div id='cart'>";
         $conn = OpenCon();
-        $sql = "SELECT * FROM `Order`";
+        $sql = "SELECT * FROM `Order` WHERE Customer_ID = '$customerId'"  ;
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
@@ -302,8 +306,7 @@ echo"
             <span class='close' onclick='closeModal()'>&times;</span>
             <h2>Thông tin đơn hàng</h2>
             <form id='orderDetailsForm' method='post' >
-                <input type='hidden' name='Order_ID' value='$orderId'>
-
+              
                 <?php
                 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Order_ID'])) {
                     $orderId = $_POST['Order_ID'];
@@ -311,6 +314,7 @@ echo"
 
                     $customerInfo = getCustomerInfo($orderId);
                     $orderItems = getOrderItems($orderId);
+                    var_dump($orderItems);
 
                     echo "<label for='promo'>Khuyến mãi, giảm giá:</label>";
                     echo "<select id='promo' name='promo'>";
@@ -419,6 +423,8 @@ echo"
                     if ($orderStatus === "Confirmed") {
                         echo "<button type='button' onclick='completeOrder()'>Thanh toán</button>";
                     }
+                    echo "<input type='hidden' name='Order_ID' value='$orderId'>";
+
                 }
                 ?>
                 <button type="button" onclick="cancelOrder()">Hủy đơn hàng</button>
