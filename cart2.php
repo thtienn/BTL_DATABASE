@@ -252,6 +252,20 @@ echo"
             background-color: #f0f0f0;
         }
 
+        .order-btn {
+            border: 1px solid #ddd;
+            padding: 10px;
+            cursor: pointer;
+            width: 200px;
+            text-align: center;
+            transition: transform 0.2s ease-in-out;
+        }
+    
+        .order-btn:hover {
+            transform: scale(1.05);
+            background-color: #f0f0f0;
+        }
+    
         .modal {
             display: none;
             position: fixed;
@@ -267,11 +281,31 @@ echo"
             z-index: 1000;
         }
 
+    
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+    
+        button {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+    
+        button:hover {
+            background-color: #555;
         .modal-content {
             max-height: 400px;
             overflow-y: auto;
         }
-
         .close {
             position: absolute;
             top: 10px;
