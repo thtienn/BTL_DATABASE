@@ -17,7 +17,7 @@ else {
             session_start();
             $_SESSION['customerId'] = $customerInfo['Customer_ID'];
             echo "New record created successfully";
-            header('Location: view');;
+            header('Location: view');
         }
         else {
             echo "Error: " . $query . "<br>" . $conn->error;
