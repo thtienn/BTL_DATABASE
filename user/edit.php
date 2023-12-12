@@ -2,7 +2,7 @@
 require_once('db_connnection.php');
 
 if(isset($_POST['submit'])) {
-    $maNhanVien = $_POST['submit'];
+    $maNhanVien = $_POST['tenDangNhap'];
     $tenNhanVien = $_POST['tenNhanVien'];
     $sdt = $_POST['sdt'];
     $gioitinh = $_POST['gioiTinh'];

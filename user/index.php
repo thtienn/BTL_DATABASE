@@ -205,9 +205,9 @@
                             <td class='align-middle'><?php echo $row['Branch_ID'] ?></td>
                             <td class='align-middle'>
                                 <div class="d-inline-flex">
-                                    <button type='button' class='btn-edit btn btn-primary m-1' data-bs-idAddr='<?php echo $row['Employee_ID'] ?>'  data-bs-target='#Edit' data-bs-toggle='modal'>Edit</button>
+                                    <button type='submit' class='btn-edit btn btn-primary m-1' data-bs-tenDangNhap='<?php echo $row['Employee_ID'] ?>'  data-bs-target='#Edit' data-bs-toggle='modal'>Edit</button>
         
-                                        <button type='submit' class='btn-delete btn btn-danger m-1' data-bs-tenDangNhap='<?php echo $row['Employee_ID'] ?>' data-bs-target='#Delete' data-bs-toggle='modal'>Delete</button>
+                                    <button type='submit' class='btn-delete btn btn-danger m-1' data-bs-tenDangNhap='<?php echo $row['Employee_ID'] ?>' data-bs-target='#Delete' data-bs-toggle='modal'>Delete</button>
                                 </div>
                             </td>
                         </tr>
@@ -225,8 +225,13 @@
                         <h5 class="modal-title">Chỉnh sửa</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form action="edit.php" method="post" enctype="multipart/form-data">
-                        <div class="modal-body">
+                    <form action="edit.php" method="post">
+                        <div class="modal-body" role="document">
+                        <div class="form-group">
+                                <label>Mã nhân viên</label>
+                                <input class="form-control my-2" type="text" name="tenDangNhap" readonly/>
+                            </div>
+
                             <div class="form-group">
                                 <label>Tên nhân viên</label>
                                 <input class="form-control my-2" type="text" placeholder="Lê Phan Thuỷ Tiên" name="tenNhanVien" />
@@ -310,7 +315,7 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Đóng lại</button>
-                            <button class="btn btn-primary" type="submit" name="submit" value="idAddr">Cập nhật</button>
+                            <button class="btn btn-primary" type="submit" name="submit" value="tenDangNhap">Cập nhật</button>
                         </div>
                     </form>
                 </div>
