@@ -1,12 +1,13 @@
 <?php
-require_once('db_connnection.php');
-$tenMonAn = $_POST['tenMonAn'];
-$maMonAn = $_POST['maMonAn'];
-$moTaMonan = $_POST['moTaMonan'];
-$giaNiemYet = $_POST['giaNiemYet'];
+require_once('db_connection.php');
+$Name = $_POST['Name'];
+$Product_ID = $_POST['Product_ID'];
+$Description = $_POST['Description'];
+$Size = $_POST['Size'];
+$Price = $_POST['Price'];
 
 $conn = OpenCon();
-$query = "CALL Update_mon_an('$tenMonAn', '$maMonAn', '$moTaMonan', '$giaNiemYet');";
+$query = "CALL Update_Product('$Name', '$Product_ID', '$Description','$Size', '$Price');";
 if ($conn->query($query) === TRUE) {
     echo "Successfully";
     header('Location: index.php');

@@ -1,5 +1,5 @@
 <?php
-require_once('product/db_connnection.php');
+require_once('product/db_connection.php');
 $username = $_POST['username'];
 $password = $_POST['password'];
 

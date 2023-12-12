@@ -10,7 +10,7 @@
 
 <body>
     <?php
-    require_once(__DIR__ . '\db_connnection.php');
+    require_once(__DIR__ . '\db_connection.php');
 
     function getOrderList() {
         $conn = OpenCon();
@@ -136,11 +136,11 @@
                     if ($result->num_rows > 0) {
                         // OUTPUT DATA OF EACH ROW
                         while ($row = $result->fetch_assoc()) {
-                            $maMonAn = $row['Product_ID'];
-                            $tenMonAn = $row['Name'];
-                            $moTaMonan = $row['Description'];
-                            $giaNiemYet = $row['Price'];
-                            $query = "SELECT * FROM `Product` WHERE Product_ID = '$maMonAn';";
+                            $Product_ID = $row['Product_ID'];
+                            $Name = $row['Name'];
+                            $Description = $row['Description'];
+                            $Price = $row['Price'];
+                            $query = "SELECT * FROM `Product` WHERE Product_ID = '$Product_ID';";
 
                             $result1 = $conn->query($query);
                             $result2 = $result1->fetch_assoc()['Photo'];
@@ -150,16 +150,16 @@
         <img src='$result2' alt=''>
 
         <div class='card-body'>
-            <h4 class='card-title'>$tenMonAn</h4>
-            <p class='card-text'>$moTaMonan</p>
+            <h4 class='card-title'>$Name</h4>
+            <p class='card-text'>$Description</p>
             <div class='d-flex justify-content-between align-items-center'>
                 <div class='btn-group'>
-                    <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?Produce_ID=$maMonAn'>Xem</a></button>
+                    <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?Product_ID=$Product_ID'>Xem</a></button>
                 </div>
                 <div>
-                    <button onclick=\"addToCart('$tenMonAn', $giaNiemYet)\">Thêm vào đơn hàng</button>
+                    <button onclick=\"addToCart('$Name', $Price)\">Thêm vào đơn hàng</button>
                 </div>
-                <div class='text-muted text-bold align-middle'>Giá: $giaNiemYet Đ</div>
+                <div class='text-muted text-bold align-middle'>Giá: $Price Đ</div>
             </div>
         </div>
     </div>
@@ -174,11 +174,11 @@
                     if ($result->num_rows > 0) {
                         // OUTPUT DATA OF EACH ROW
                         while ($row = $result->fetch_assoc()) {
-                            $maMonAn = $row['Combo_ID'];
-                            $tenMonAn = $row['Name'];
-                            $moTaMonan = $row['Description'];
-                            $giaNiemYet = $row['Price'];
-                            $query = "SELECT * FROM `Combo` WHERE Combo_ID = '$maMonAn';";
+                            $Product_ID = $row['Combo_ID'];
+                            $Name = $row['Name'];
+                            $Description = $row['Description'];
+                            $Price = $row['Price'];
+                            $query = "SELECT * FROM `Combo` WHERE Combo_ID = '$Product_ID';";
 
                             $result1 = $conn->query($query);
                             $result2 = $result1->fetch_assoc()['Photo'];
@@ -188,24 +188,17 @@
                                 <img src='$result2' alt=''>
                         
                                 <div class='card-body'>
-                                    <h4 class='card-title'>$tenMonAn</h4>
-                                    <p class='card-text'>$moTaMonan</p>
+                                    <h4 class='card-title'>$Name</h4>
+                                    <p class='card-text'>$Description</p>
                                     <div class='d-flex justify-content-between align-items-center'>
                                         <div class='btn-group'>
-                                            <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?Produce_ID=$maMonAn'>Xem</a></button>
+                                            <button type='button' class='btn btn-outline-secondary'><a href='view_detail/index.php?Product_ID=$Product_ID'>Xem</a></button>
                                         </div>
                                         <div>
-                                            <button onclick=\"addToCart('$tenMonAn', $giaNiemYet)\">Thêm vào đơn hàng</button>
-                                            <div class='text-muted text-bold align-middle'>Giá: $giaNiemYet Đ</div>
+                                            <button onclick=\"addToCart('$Name', $Price)\">Thêm vào đơn hàng</button>
+                                            <div class='text-muted text-bold align-middle'>Giá: $Price Đ</div>
                                         </div>
                                     </div>
-<<<<<<< HEAD
-=======
-                                    <div>
-                                        <button onclick=\"addToOrder('<?php echo $productName; ?>', <?php echo $productPrice; ?>)\">Thêm vào đơn hàng</button>
-                                    </div>
-                                    <div class='text-muted text-bold align-middle'>Giá: $Price Đ</div>
->>>>>>> 2ae9080 (admin - manage employee - Do Tien fix bug giup to :<)
                                 </div>
                             </div>
                         </div>";
@@ -221,4 +214,3 @@
             </body>
             
             </html>
-

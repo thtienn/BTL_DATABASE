@@ -1,5 +1,5 @@
 <?php
-require_once('db_connnection.php');
+require_once('db_connection.php');
 
 function getCustomerInfo($customerId) {
     $conn = OpenCon();

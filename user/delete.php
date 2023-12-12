@@ -1,5 +1,5 @@
 <?php
-require_once('db_connnection.php');
+require_once('db_connection.php');
 if (isset($_POST['idAddr'])) {
     $id = $_POST['idAddr'];
 
@@ -15,4 +15,3 @@ if (isset($_POST['idAddr'])) {
         header('Location: index.php?err=' . $conn->error);
     }
 }
-

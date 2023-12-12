@@ -1,9 +1,9 @@
 <?php
-require_once('db_connnection.php');
-$maMonAn = $_POST['maMonAn'];
+require_once('db_connection.php');
+$Product_ID = $_POST['Product_ID'];
 
 $conn = OpenCon();
-$query = "CALL Delete_mon_an('$maMonAn')";
+$query = "CALL Delete_Product('$Product_ID')";
 
 if ($conn->query($query) === TRUE) {
     echo "Successfully";

@@ -12,8 +12,8 @@
 
 <body>
     <div class="container">
-        <a href="../user" class="btn btn-warning float-end">Chuyển đến màn hình quản lí nhân viên</a>
-        <h1 class="my-3">Quản lý cửa hàng</h1>
+        <a href="../user" class="btn btn-warning float-end">Quản lý người dùng</a>
+        <h1 class="my-3">Manage Products</h1>
         <hr>
         <?php
         if (isset($_GET['err'])) {
@@ -35,19 +35,23 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label>Tên món ăn</label>
-                                <input class="form-control my-2" type="text" placeholder="Tên món ăn" name="tenMonAn" />
+                                <input class="form-control my-2" type="text" placeholder="Tên món ăn" name="Name" />
                             </div>
                             <div class="form-group">
                                 <label>Mã món ăn</label>
-                                <input class="form-control my-2" type="text" placeholder="Mã món ăn" name="maMonAn" />
+                                <input class="form-control my-2" type="text" placeholder="Mã món ăn" name="Product_ID" />
                             </div>
                             <div class="form-group">
                                 <label>Mô tả món ăn</label>
-                                <textarea class="form-control my-2" placeholder="Mô tả món ăn" name="moTaMonan" style="height: 150px;" /></textarea>
+                                <textarea class="form-control my-2" placeholder="Mô tả món ăn" name="Description" style="height: 150px;" /></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Kích cỡ</label>
+                                <input class="form-control my-2" type="text" placeholder="Size" name="Size" />
                             </div>
                             <div class="form-group">
                                 <label>Giá niêm yết</label>
-                                <input class="form-control my-2" type="number" placeholder="Giá niêm yết" name="giaNiemYet" />
+                                <input class="form-control my-2" type="number" placeholder="Giá niêm yết" name="Price" />
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -58,46 +62,25 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-info mb-3" data-bs-toggle="modal" data-bs-target="#fun">Phân loại món ăn theo giá</button>
-        <div class="modal fade" id="fun" tabindex="-1" role="dialog" aria-labelledby="fun" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Phân loại món ăn theo giá</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="fun.php" method="post" enctype="multipart/form-data">
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Giá cần phân loại</label>
-                                <input class="form-control my-2" type="number" placeholder="Giá cần phân loại" name="gia" />
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Thực hiện</button>
-                            <button class="btn btn-primary" type="submit">Thêm mới</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <a class="btn btn-success mb-3" href="fun1">Phân loại món ăn theo giá (tự động)</a>
+       
+        <a class="btn btn-success mb-3" href="top">Top sản phẩm bán chạy</a>
         <table class="table table-striped mt-2" id="tab-product">
             <thead>
                 <tr>
                     <th scope="col">Tên món ăn</th>
                     <th scope="col">Mã món ăn</th>
                     <th scope="col">Mô tả món ăn</th>
+                    <th scope="col">Size</th>
                     <th scope="col">Giá niêm yết</th>
                     <th scope="col">Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                require_once('db_connnection.php');
+                require_once('db_connection.php');
 
                 $conn = OpenCon();
-                $query = "SELECT * FROM `mon_an`;";
+                $query = "SELECT * FROM `product`;";
 
                 $result = $conn->query($query);
 
@@ -106,15 +89,15 @@
                     while ($row = $result->fetch_assoc()) {
                 ?>
                         <tr class="justify-content-center">
-                            <th class='align-middle' scope="row"><?php echo $row['tenMonAn'] ?></th>
-                            <td class='align-middle'><?php echo $row['maMonAn'] ?></td>
-                            <td class='align-middle'><?php echo $row['moTaMonan'] ?></td>
-                            <td class='align-middle'><?php echo $row['giaNiemYet'] ?></td>
+                            <th class='align-middle' scope="row"><?php echo $row['Name'] ?></th>
+                            <td class='align-middle'><?php echo $row['Product_ID'] ?></td>
+                            <td class='align-middle'><?php echo $row['Description'] ?></td>
+                            <td class='align-middle'><?php echo $row['Size'] ?></td>
+                            <td class='align-middle'><?php echo $row['Price'] ?></td>
                             <td class='align-middle'>
                                 <div class="d-inline-flex">
-                                    <a class="btn btn-secondary m-1" href="../view/view_detail/index.php?Product_ID=<?php echo $row['maMonAn'] ?>">Read</a>
-                                    <button type='button' class='btn-edit btn btn-primary m-1' data-bs-tenMonAn='<?php echo $row['tenMonAn'] ?>' data-bs-maMonAn='<?php echo $row['maMonAn'] ?>' data-bs-moTaMonan='<?php echo $row['moTaMonan'] ?>' data-bs-giaNiemYet='<?php echo $row['giaNiemYet'] ?>' data-bs-target='#Edit' data-bs-toggle='modal'>Edit</button>
-                                    <button type='button' class='btn-delete btn btn-danger m-1' data-bs-tenMonAn='<?php echo $row['tenMonAn'] ?>' data-bs-target='#Delete' data-bs-toggle='modal'>Delete</button>
+                                    <button type='button' class='btn-edit btn btn-primary m-1' data-bs-Name='<?php echo $row['Name'] ?>' data-bs-Product_ID='<?php echo $row['Product_ID'] ?>' data-bs-Description='<?php echo $row['Description'] ?>' data-bs-Price='<?php echo $row['Price'] ?>' data-bs-target='#Edit' data-bs-toggle='modal'>Edit</button>
+                                    <button type='button' class='btn-delete btn btn-danger m-1' data-bs-Name='<?php echo $row['Name'] ?>' data-bs-target='#Delete' data-bs-toggle='modal'>Delete</button>
                                 </div>
                             </td>
                         </tr>
@@ -136,19 +119,23 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label>Tên món ăn</label>
-                                <input class="form-control my-2" type="text" placeholder="Tên món ăn" name="tenMonAn" />
+                                <input class="form-control my-2" type="text" placeholder="Tên món ăn" name="Name" />
                             </div>
                             <div class="form-group">
                                 <label>Mã món ăn</label>
-                                <input class="form-control my-2" type="text" placeholder="Mã món ăn" name="maMonAn" readonly />
+                                <input class="form-control my-2" type="text" placeholder="Mã món ăn" name="Product_ID" readonly />
                             </div>
                             <div class="form-group">
                                 <label>Mô tả món ăn</label>
-                                <textarea class="form-control my-2" placeholder="Mô tả món ăn" name="moTaMonan" style="height: 150px;" /></textarea>
+                                <textarea class="form-control my-2" placeholder="Mô tả món ăn" name="Description" style="height: 150px;" /></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Size</label>
+                                <input class="form-control my-2" type="text" placeholder="Size" name="Size" />
                             </div>
                             <div class="form-group">
                                 <label>Giá niêm yết</label>
-                                <input class="form-control my-2" type="number" placeholder="Giá niêm yết" name="giaNiemYet" />
+                                <input class="form-control my-2" type="number" placeholder="Giá niêm yết" name="Price" />
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -169,8 +156,8 @@
                     </div>
                     <form action="delete.php" method="post">
                         <div class="modal-body">
-                            <input type="text" name="tenMonAn" class="form-control my-2" readonly />
-                            <p>Bạn chắc chưa ?</p>
+                            <input type="text" name="Name" class="form-control my-2" readonly />
+                            <p>Bạn chắc chứ ?</p>
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-primary btn-outline-light" type="button" data-bs-dismiss="modal">Đóng lại</button>

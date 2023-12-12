@@ -18,7 +18,7 @@
 
 <body>
     <div class="container">
-        <a href="../product" class="btn btn-warning float-end">Chuyển đến màn hình quản lí sản phẩm</a>
+        <a href="../product" class="btn btn-warning float-end">Quản lý sản phẩm</a>
         <h1 class="my-3">Quản lý nhân viên</h1>
         <hr>
         <?php
@@ -28,7 +28,7 @@
             echo "<button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>";
             echo "</div>";
         }
-        require_once('db_connnection.php');
+        require_once('db_connection.php');
 
                 $conn = OpenCon();
                 $query = "SELECT * FROM `Employee`;";
@@ -150,7 +150,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-info mb-3" data-bs-toggle="modal" data-bs-target="#fun">Khách hàng có điểm cao hơn ...</button>
+        <!-- <button class="btn btn-info mb-3" data-bs-toggle="modal" data-bs-target="#fun">Khách hàng có điểm cao hơn ...</button> -->
         <div class="modal fade" id="fun" tabindex="-1" role="dialog" aria-labelledby="fun" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">

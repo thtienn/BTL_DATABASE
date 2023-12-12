@@ -1,5 +1,5 @@
 <?php
-require_once('db_connnection.php');
+require_once('db_connection.php');
 if (isset($_GET['Product_ID'])) {
     $conn = OpenCon();
     $maMonAn = $_GET['Product_ID'];

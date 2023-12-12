@@ -1,19 +1,19 @@
 $(".btn-edit").click(function (e) {
-    const tenMonAn = this.getAttribute('data-bs-tenMonAn')
-    $("#Edit input[name='tenMonAn']").val(tenMonAn);
-    const maMonAn = this.getAttribute('data-bs-maMonAn')
-    $("#Edit input[name='maMonAn']").val(maMonAn);
-    const moTaMonan = this.getAttribute('data-bs-moTaMonan')
-    $("#Edit textarea[name='moTaMonan']").val(moTaMonan);
-    const giaNiemYet = this.getAttribute('data-bs-giaNiemYet')
-    $("#Edit input[name='giaNiemYet']").val(giaNiemYet);
+    const Name = this.getAttribute('data-bs-Name')
+    $("#Edit input[name='Name']").val(Name);
+    const Product_ID = this.getAttribute('data-bs-Product_ID')
+    $("#Edit input[name='Product_ID']").val(Product_ID);
+    const Description = this.getAttribute('data-bs-Description')
+    $("#Edit textarea[name='Description']").val(Description);
+    const Price = this.getAttribute('data-bs-Price')
+    $("#Edit input[name='Price']").val(Price);
     $('#Edit').modal('show');
 });
 
 $(".btn-delete").click(function (e) {
-    const tenMonAn = this.getAttribute('data-bs-tenMonAn')
+    const Name = this.getAttribute('data-bs-Name')
     //console.log(username);
-    $("#Delete input[name='tenMonAn']").val(tenMonAn);
+    $("#Delete input[name='Name']").val(Name);
     $('#Delete').modal('show');
 });
 $(document).ready(function () {

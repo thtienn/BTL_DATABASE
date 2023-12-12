@@ -1,6 +1,18 @@
 CREATE DATABASE store;
 USE store;
 
+-- #####################SETUP#######################
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
 -- #####################Entity#######################
 
 CREATE TABLE Customer (
@@ -109,16 +121,16 @@ CREATE TABLE Promotion (
     Application_Date DATE NOT NULL,
     Expiration_Date DATE NOT NULL,
     Application_Terms TEXT NOT NULL,
-    Maximum_Discount DECIMAL(5, 2) NOT NULL,
+    Maximum_Amount DECIMAL(10, 2),
+    Minimum_Order DECIMAL(10, 2),
+    Discount_Value DECIMAL(10, 2) NOT NULL,
     Discount_Method ENUM('PERCENTAGE', 'AMOUNT') NOT NULL
 );
 
-INSERT INTO Promotion (Promotion_ID,Name, Application_Date, Expiration_Date, Application_Terms, Maximum_Discount, Discount_Method)
+INSERT INTO Promotion (Promotion_ID,Name, Application_Date, Expiration_Date, Application_Terms, Discount_Value, Discount_Method, Maximum_Amount,Minimum_Order)
 VALUES
-('KM01','Khuyến mãi', '2023-06-01', '2023-08-31', 'Áp dụng cho tất cả khách hàng', 10.00, 'PERCENTAGE'),
-('KM02','Giảm giá', '2023-09-01', '2023-09-30', 'Áp dụng cho đơn hàng trên 500,000 VND', 50.00, 'AMOUNT'),
-('KM03','Lần đầu', '2023-10-01', '2023-10-31', 'Chỉ áp dụng cho khách hàng mua lần đầu', 15.00, 'PERCENTAGE'),
-('KM04','Ưu đãi', '2023-12-01', '2023-12-25', 'Áp dụng cho mọi đơn hàng', 100.00, 'AMOUNT');
+('KM01','Khuyến mãi', '2023-06-01', '2023-12-31', 'Áp dụng cho tất cả đơn hàng', 10.00, 'PERCENTAGE',30000.00,0),
+('KM02','Giảm giá', '2023-09-01', '2023-12-30', 'Áp dụng cho đơn hàng trên 300,000 VND', 50000.00, 'AMOUNT',50000.00,300000.00);
 
 CREATE TABLE Delivery (
     Delivery_ID varchar(256) NOT NULL,
@@ -129,9 +141,135 @@ CREATE TABLE Delivery (
 
 INSERT INTO Delivery (Delivery_ID,Name, Location, Freight)
 VALUES
-('GH01','Giao hàng Nhanh', 'Ho Chi Minh - District 1',30000),
+('GH01','Giao hàng Nhanh', 'Ho Chi Minh - District 1',20000),
 ('GH02','Chuyển phát Siêu Tốc', 'Ho Chi Minh - District 3',25000),
-('GH03','Dịch vụ Giao hàng Tiết kiệm', 'Ho Chi Minh - District 5',20000);
+('GH03','Dịch vụ Giao hàng Tiết kiệm', 'Ho Chi Minh - District 5',30000);
+
+CREATE TABLE Product (
+    Product_ID varchar(256) NOT NULL,
+    Name VARCHAR(256) NOT NULL,
+    Price DECIMAL(10, 2) NOT NULL,
+    Description TEXT,
+    Photo VARCHAR(256),
+    Item_ID VARCHAR(10),
+    Size VARCHAR(5),
+    Category VARCHAR(256)
+);
+
+INSERT INTO Product (Product_ID,Name, Price, Description, Photo, Size, Category)
+VALUES
+('P01', 'Bánh Mì Heo Quay', 30000.00, 'Bánh mì thơm ngon kết hợp với lớp thịt heo quay giòn tan, tạo nên một trải nghiệm ẩm thực độc đáo và ngon miệng cho bữa sáng đầy năng lượng.', 'https://bit.ly/p01banhmi', NULL, 'Đồ ăn'),
+('P02', 'Mì Spaghetti Sốt Bò Bằm', 35000.00, 'Spaghetti mềm dai kèm theo sốt bò bằm thơm ngon, tạo nên một bữa ăn Ý truyền thống, hấp dẫn vị giác.', 'https://bit.ly/P02mispaghetti', NULL, 'Đồ ăn'),
+('P03', 'Hamburger Gà Giòn', 30000.00, 'Hamburger tuyệt vời với lớp gà giòn giòn, thêm cùng các gia vị tinh tế, đảm bảo là một trải nghiệm ăn uống hết sức ngon miệng.', 'https://bit.ly/P03hamburger', NULL, 'Đồ ăn'),
+('P04', 'Khoay Tây Chiên', 25000.00, 'Khoai tây vàng giòn, chiên tới khi hấp dẫn và thơm ngon, là món ăn nhẹ hoàn hảo hoặc là món kèm tuyệt vời.', 'https://bit.ly/P04khoaitaychien', NULL, 'Đồ ăn'),
+('P05', 'Salad Sốt Mè', 20000.00, 'Salad tươi mát với rau sống và sốt mè béo ngậy, mang lại sự tinh tế và dinh dưỡng cho bữa ăn lành mạnh.', '', NULL, 'Đồ ăn'),
+('P06', 'Yogurt Dâu Tây', 25000.00, 'Yogurt mềm mịn kết hợp với hương vị ngọt ngào của dâu tây, là món tráng miệng hoàn hảo và lành mạnh.', 'https://bit.ly/P06dautay', NULL, 'Đồ ăn'),
+('P07', 'Bánh Tiramisu', 25000.00, 'Bánh Tiramisu đậm đà với lớp kem phô mai và cacao, mang lại hương vị hấp dẫn và khó cưỡng.', 'https://bit.ly/P07tiramisu', NULL, 'Đồ ăn'),
+('P08', 'Cà Phê Đen', 20000.00, 'Cà phê đen đậm đà, hương thơm mạnh mẽ, là sự lựa chọn lý tưởng cho những người yêu thích cảm giác tỉnh táo.', 'https://bit.ly/P13cfden', 'M', 'Thức uống'),
+('P09', 'Cà Phê Sữa', 22000.00, 'Cà phê sữa ngọt ngào, cân bằng hài hòa giữa đắng và ngọt, đem đến một trải nghiệm cà phê tuyệt vời.', 'https://bit.ly/P14cfsua', 'M', 'Thức uống'),
+('P10', 'Trà Ô Long Nhài Sữa', 30000.00, 'Trà ô long thơm lừng pha cùng hương nhài mềm mại, kết hợp với sữa tươi, tạo nên đồ uống thư giãn và thơm ngon.', 'https://bit.ly/P15olong', 'M', 'Thức uống'),
+('P11', 'Trà Lài Đác Thơm', 30000.00, 'Trà lài đi cùng là hạt đác, thơm tươi đem đến sự kết hợp tuyệt vời để làm dịu dàng vị giác, giải nhiệt trong ngày nắng nóng.', 'https://bit.ly/P16tralai', 'M', 'Thức uống'),
+('P12', 'Trà Đào Cam Sả', 30000.00, 'Hòa quyện giữa hương đào ngọt ngào, cam chua ngọt và mùi sả tinh tế, trà này đem đến cảm giác tươi mới và phấn khích.', 'https://bit.ly/P17tradao', 'M', 'Thức uống'),
+('P13', 'Cà Phê Đen', 25000.00, 'Cà phê đen đậm đà, hương thơm mạnh mẽ, là sự lựa chọn lý tưởng cho những người yêu thích cảm giác tỉnh táo.', 'https://bit.ly/P13cfden', 'L', 'Thức uống'),
+('P14', 'Cà Phê Sữa', 27000.00, 'Cà phê sữa ngọt ngào, cân bằng hài hòa giữa đắng và ngọt, đem đến một trải nghiệm cà phê tuyệt vời.', 'https://bit.ly/P14cfsua', 'L', 'Thức uống'),
+('P15', 'Trà Ô Long Nhài Sữa', 35000.00, 'Trà ô long thơm lừng pha cùng hương nhài mềm mại, kết hợp với sữa tươi, tạo nên đồ uống thư giãn và thơm ngon.', 'https://bit.ly/P15olong', 'L', 'Thức uống'),
+('P16', 'Trà Lài Đác Thơm', 35000.00, 'Trà lài đi cùng là hạt đác, thơm tươi đem đến sự kết hợp tuyệt vời để làm dịu dàng vị giác, giải nhiệt trong ngày nắng nóng.', 'https://bit.ly/P16tralai', 'L', 'Thức uống'),
+('P17', 'Trà Đào Cam Sả', 35000.00, 'Hòa quyện giữa hương đào ngọt ngào, cam chua ngọt và mùi sả tinh tế, trà này đem đến cảm giác tươi mới và phấn khích.', 'https://bit.ly/P17tradao', 'L', 'Thức uống'),
+('P18', 'CocaCola', 10000.00, 'Một chai CocaCola mát lạnh, một tinh thần sảng khoái.', 'https://bit.ly/P18cocacola', NULL, 'Thức uống');
+
+DELIMITER $$
+CREATE TRIGGER `calculate_order_total_on_product_price_update` AFTER UPDATE ON `product` FOR EACH ROW BEGIN
+    DECLARE order_total DECIMAL(10, 2);
+
+    -- Calculate the total price for the order
+    SELECT SUM(Product.Price) INTO order_total
+    FROM `Order`
+    JOIN Order_Line ON `Order`.Order_ID = Order_Line.Order_ID
+    WHERE Order_Line.Product_ID = OLD.Product_ID;
+
+    -- Update the total price in the Order table
+    UPDATE `Order`
+    SET Total_Price = order_total
+    WHERE Order_ID IN (SELECT Order_ID FROM Order_Line WHERE Product_ID = OLD.Product_ID);
+END
+$$
+DELIMITER ;
+
+CREATE TABLE Combo (
+    Combo_ID varchar(256) NOT NULL,
+    Name VARCHAR(255) NOT NULL,
+    Description TEXT,
+    Price DECIMAL(10, 2) NOT NULL,
+    Photo VARCHAR(255)
+);
+
+INSERT INTO Combo (Combo_ID,Name, Description, Price, Photo)
+VALUES
+('C01', 'Khởi Đầu Vui Vẻ', 'Hãy bắt đầu ngày mới của bạn với sự kết hợp hoàn hảo giữa một ly cà phê sữa đậm đà và một chiếc bánh mì heo quay giòn tan, thơm lừng sẽ đưa bạn đến một trải nghiệm ẩm thực độc đáo.', 49000.00, 'https://bit.ly/C01khoidauvuive'),
+('C02', 'Bộ Ba Ăn Ý', 'Sự kết hợp vô cùng quen thuộc, một bữa trưa ngon miệng và đầy đủ năng lượng cùng với hamburger, khoai tây chiên giòn và một cốc Cocacola bùng nổ vị giác.', 59000.00, 'https://bit.ly/C02bobaany');
+
+DELIMITER $$
+CREATE TRIGGER `calculate_order_total_on_combo_price_update` AFTER UPDATE ON `combo` FOR EACH ROW BEGIN
+    DECLARE order_total DECIMAL(10, 2);
+
+    -- Calculate the total price for the order
+    SELECT SUM(Combo.Price) INTO order_total
+    FROM `Order`
+    JOIN Order_Line ON `Order`.Order_ID = Order_Line.Order_ID
+    JOIN Item ON Order_Line.Item_ID = Item.Item_ID
+    JOIN Combo ON Item.Combo_ID = Combo.Combo_ID
+    WHERE Item.Combo_ID = OLD.Combo_ID;
+
+    -- Update the total price in the Order table
+    UPDATE `Order`
+    SET Total_Price = order_total
+    WHERE Order_ID IN (SELECT Order_ID FROM Order_Line WHERE Item_ID IN (SELECT Item_ID FROM Item WHERE Combo_ID = OLD.Combo_ID));
+END
+$$
+DELIMITER ;
+
+CREATE TABLE Item (
+    Item_ID varchar(256) NOT NULL,
+    Product_ID varchar(256),
+    Combo_ID varchar(256)
+);
+
+INSERT INTO Item (Item_ID, Product_ID, Combo_ID)
+VALUES
+('MH01', 'P01', NULL),
+('MH02', 'P02', NULL),
+('MH03', 'P03', NULL),
+('MH04', 'P04', NULL),
+('MH05', 'P05', NULL),
+('MH06', 'P06', NULL),
+('MH07', 'P07', NULL),
+('MH08', 'P08', NULL),
+('MH09', 'P09', NULL),
+('MH10', 'P10', NULL),
+('MH11', 'P11', NULL),
+('MH12', 'P12', NULL),
+('MH13', 'P13', NULL),
+('MH14', 'P14', NULL),
+('MH15', 'P15', NULL),
+('MH16', 'P16', NULL),
+('MH17', 'P17', NULL),
+('MH18', 'P18', NULL),
+('MH19', NULL, 'C01'),
+('MH20', NULL, 'C02');
+
+CREATE TABLE Combo_List (
+    Combo_ID varchar(256) NOT NULL,
+    Product_ID varchar(256) NOT NULL,
+    Quantity INT NOT NULL
+);
+
+INSERT INTO Combo_List (Combo_ID, Product_ID, Quantity)
+VALUES
+('C01', 'P01', 1),
+('C01', 'P09', 1),
+('C02', 'P03', 1),
+('C02', 'P04', 1),
+('C02', 'P18', 1);
 
 CREATE TABLE `Order` (
     Order_ID varchar(256) NOT NULL,
@@ -345,322 +483,6 @@ INSERT INTO `Order` (Order_ID, Order_Date, Note, Total_Price, Status, Customer_I
 INSERT INTO `Order` (Order_ID, Order_Date, Note, Total_Price, Status, Customer_ID, Cashier_ID, Branch_ID) VALUES ('DH199', '2023-12-10', 'Ghi chú cho đơn hàng 199', 612000.0, 'PROCESSING', 'KH20', 'NV03', 'CH03');
 INSERT INTO `Order` (Order_ID, Order_Date, Note, Total_Price, Status, Customer_ID, Cashier_ID, Branch_ID) VALUES ('DH200', '2023-12-10', 'Ghi chú cho đơn hàng 200', 190000.0, 'PROCESSING', 'KH23', 'NV04', 'CH04');
 
-
-CREATE TABLE Bill (
-    Bill_ID varchar(256) NOT NULL,
-    Feedback TEXT,
-    Customer_ID varchar(256) NOT NULL,
-    Order_ID varchar(256) NOT NULL,
-    Bill_Date DATE NOT NULL,
-    Delivery_Fee DECIMAL(10, 2) NOT NULL,
-    Total_Price DECIMAL(10, 2) NOT NULL,
-    Method ENUM('CASH', 'MOMO', 'BANKING') NOT NULL,
-    Promotion_ID varchar(256),
-    Discount_Price DECIMAL(10, 2),
-    Discount_Percent DECIMAL(5, 2)
-);
-
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD001', 'Rất hài lòng', 343000.0, 'CASH','2023-09-02', 17000.0, 5,20000, 'KH09', 'DH001','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD002', 'Tốt', 214000.0, 'CASH','2023-09-03', 66000.0, 30,60000, 'KH05', 'DH002','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD003', 'Tốt', 56000.0, 'MOMO','2023-09-04', 4000.0, 10,20000, 'KH29', 'DH003','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD004', 'Rất hài lòng', 214500.0, 'CASH','2023-09-05', 25500.0, 15,70000, 'KH11', 'DH004','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD005', 'Tốt', 353550.0, 'CASH','2023-09-06', 15450.0, 5,60000, 'KH30', 'DH005','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD006', 'Rất hài lòng', 345750.0, 'BANKING','2023-09-07', 105250.0, 25,30000, 'KH05', 'DH006','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD007', 'Rất hài lòng', 107200.0, 'BANKING','2023-09-08', 16800.0, 20,40000, 'KH13', 'DH007','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD008', 'Tốt', 322200.0, 'BANKING','2023-09-09', 13800.0, 5,60000, 'KH15', 'DH008','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD009', 'Bình Thường', 452400.0, 'CASH','2023-09-10', 95600.0, 20,70000, 'KH02', 'DH009','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD010', 'Tốt', 308200.0, 'MOMO','2023-09-11', 43800.0, 15,60000, 'KH09', 'DH010','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD011', 'Rất hài lòng', 232450.0, 'BANKING','2023-09-12', 8550.0, 5,70000, 'KH30', 'DH011','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD012', 'Bình Thường', 295600.0, 'MOMO','2023-09-13', 56400.0, 20,70000, 'KH09', 'DH012','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD013', 'Tốt', 497450.0, 'BANKING','2023-09-14', 23550.0, 5,50000, 'KH06', 'DH013','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD014', 'Bình Thường', 204300.0, 'BANKING','2023-09-15', 9700.0, 5,20000, 'KH17', 'DH014','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD015', 'Rất hài lòng', 96000.0, 'BANKING','2023-09-16', 4000.0, 10,60000, 'KH13', 'DH015','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD016', 'Bình Thường', 110000.0, 'BANKING','2023-09-17', 30000.0, 25,20000, 'KH05', 'DH016','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD017', 'Bình Thường', 41000.0, 'CASH','2023-09-18', 9000.0, 30,20000, 'KH27', 'DH017','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD018', 'Rất hài lòng', 67500.0, 'MOMO','2023-09-19', 12500.0, 25,30000, 'KH20', 'DH018','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD019', 'Rất hài lòng', 364800.0, 'CASH','2023-09-20', 37200.0, 10,30000, 'KH14', 'DH019','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD020', 'Bình Thường', 277500.0, 'MOMO','2023-09-21', 12500.0, 5,40000, 'KH14', 'DH020','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD021', 'Bình Thường', 151500.0, 'BANKING','2023-09-22', 43500.0, 30,50000, 'KH01', 'DH021','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD022', 'Bình Thường', 320250.0, 'MOMO','2023-09-23', 14750.0, 5,40000, 'KH01', 'DH022','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD023', 'Tốt', 337950.0, 'CASH','2023-09-24', 49050.0, 15,60000, 'KH09', 'DH023','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD024', 'Bình Thường', 300750.0, 'MOMO','2023-09-25', 124250.0, 35,70000, 'KH05', 'DH024','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD025', 'Bình Thường', 237450.0, 'BANKING','2023-09-26', 29550.0, 15,70000, 'KH14', 'DH025','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD026', 'Tốt', 415750.0, 'BANKING','2023-09-27', 115250.0, 25,70000, 'KH04', 'DH026','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD027', 'Rất hài lòng', 191000.0, 'MOMO','2023-09-28', 9000.0, 5,20000, 'KH03', 'DH027','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD028', 'Tốt', 364000.0, 'BANKING','2023-09-29', 81000.0, 20,40000, 'KH23', 'DH028','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD029', 'Bình Thường', 374750.0, 'CASH','2023-09-30', 180250.0, 35,40000, 'KH08', 'DH029','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD030', 'Tốt', 127750.0, 'MOMO','2023-10-01', 47250.0, 35,40000, 'KH25', 'DH030','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD031', 'Rất hài lòng', 176000.0, 'MOMO','2023-10-02', 84000.0, 35,20000, 'KH21', 'DH031','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD032', 'Rất hài lòng', 208500.0, 'MOMO','2023-10-03', 101500.0, 35,20000, 'KH07', 'DH032','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD033', 'Rất hài lòng', 238500.0, 'MOMO','2023-10-04', 31500.0, 15,60000, 'KH10', 'DH033','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD034', 'Tốt', 430500.0, 'MOMO','2023-10-05', 123500.0, 25,60000, 'KH30', 'DH034','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD035', 'Rất hài lòng', 189500.0, 'MOMO','2023-10-06', 56500.0, 25,20000, 'KH24', 'DH035','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD036', 'Rất hài lòng', 248250.0, 'CASH','2023-10-07', 36750.0, 15,40000, 'KH20', 'DH036','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD037', 'Bình Thường', 181500.0, 'MOMO','2023-10-08', 8500.0, 5,20000, 'KH22', 'DH037','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD038', 'Rất hài lòng', 473750.0, 'BANKING','2023-10-09', 21250.0, 5,70000, 'KH30', 'DH038','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD039', 'Rất hài lòng', 282500.0, 'CASH','2023-10-10', 87500.0, 25,20000, 'KH25', 'DH039','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD040', 'Tốt', 163000.0, 'CASH','2023-10-11', 77000.0, 35,20000, 'KH26', 'DH040','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD041', 'Tốt', 99250.0, 'MOMO','2023-10-12', 19750.0, 25,40000, 'KH14', 'DH041','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD042', 'Bình Thường', 58000.0, 'CASH','2023-10-13', 2000.0, 5,20000, 'KH25', 'DH042','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD043', 'Tốt', 366400.0, 'BANKING','2023-10-14', 81600.0, 20,40000, 'KH22', 'DH043','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD044', 'Bình Thường', 502800.0, 'CASH','2023-10-15', 113200.0, 20,50000, 'KH13', 'DH044','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD045', 'Tốt', 311700.0, 'BANKING','2023-10-16', 31300.0, 10,30000, 'KH15', 'DH045','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD046', 'Tốt', 234700.0, 'BANKING','2023-10-17', 18300.0, 10,70000, 'KH08', 'DH046','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD047', 'Tốt', 217300.0, 'CASH','2023-10-18', 19700.0, 10,40000, 'KH15', 'DH047','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD048', 'Bình Thường', 186000.0, 'CASH','2023-10-19', 14000.0, 10,60000, 'KH01', 'DH048','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD049', 'Tốt', 384000.0, 'BANKING','2023-10-20', 36000.0, 10,60000, 'KH27', 'DH049','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD050', 'Bình Thường', 283250.0, 'CASH','2023-10-21', 141750.0, 35,20000, 'KH09', 'DH050','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD051', 'Rất hài lòng', 354400.0, 'BANKING','2023-10-22', 73600.0, 20,60000, 'KH02', 'DH051','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD052', 'Tốt', 234250.0, 'CASH','2023-10-23', 30750.0, 15,60000, 'KH05', 'DH052','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD053', 'Rất hài lòng', 202750.0, 'CASH','2023-10-24', 32250.0, 15,20000, 'KH25', 'DH053','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD054', 'Bình Thường', 142800.0, 'BANKING','2023-10-25', 9200.0, 10,60000, 'KH19', 'DH054','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD055', 'Rất hài lòng', 222000.0, 'CASH','2023-10-26', 18000.0, 10,60000, 'KH24', 'DH055','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD056', 'Tốt', 142900.0, 'BANKING','2023-10-27', 44100.0, 30,40000, 'KH14', 'DH056','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD057', 'Bình Thường', 264750.0, 'CASH','2023-10-28', 78250.0, 25,30000, 'KH22', 'DH057','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD058', 'Tốt', 157500.0, 'CASH','2023-10-29', 42500.0, 25,30000, 'KH25', 'DH058','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD059', 'Tốt', 336300.0, 'MOMO','2023-10-30', 30700.0, 10,60000, 'KH14', 'DH059','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD060', 'Tốt', 398100.0, 'MOMO','2023-10-31', 19900.0, 5,20000, 'KH26', 'DH060','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD061', 'Rất hài lòng', 153000.0, 'CASH','2023-11-01', 7000.0, 5,20000, 'KH07', 'DH061','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD062', 'Bình Thường', 66750.0, 'BANKING','2023-11-02', 12250.0, 25,30000, 'KH15', 'DH062','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD063', 'Rất hài lòng', 444000.0, 'CASH','2023-11-03', 106000.0, 20,20000, 'KH01', 'DH063','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD064', 'Bình Thường', 145000.0, 'MOMO','2023-11-04', 35000.0, 25,40000, 'KH07', 'DH064','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD065', 'Bình Thường', 322600.0, 'CASH','2023-11-05', 15400.0, 5,30000, 'KH04', 'DH065','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD066', 'Rất hài lòng', 166000.0, 'BANKING','2023-11-06', 24000.0, 15,30000, 'KH26', 'DH066','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD067', 'Tốt', 315450.0, 'BANKING','2023-11-07', 15550.0, 5,20000, 'KH27', 'DH067','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD068', 'Rất hài lòng', 496000.0, 'MOMO','2023-11-08', 24000.0, 5,40000, 'KH28', 'DH068','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD069', 'Tốt', 192500.0, 'MOMO','2023-11-09', 7500.0, 5,50000, 'KH24', 'DH069','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD070', 'Tốt', 176000.0, 'CASH','2023-11-10', 39000.0, 20,20000, 'KH23', 'DH070','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD071', 'Tốt', 642850.0, 'MOMO','2023-11-11', 30150.0, 5,70000, 'KH18', 'DH071','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD072', 'Bình Thường', 92000.0, 'CASH','2023-11-12', 18000.0, 30,50000, 'KH26', 'DH072','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD073', 'Bình Thường', 227500.0, 'MOMO','2023-11-13', 52500.0, 25,70000, 'KH03', 'DH073','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD074', 'Bình Thường', 76000.0, 'CASH','2023-11-14', 14000.0, 35,50000, 'KH10', 'DH074','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD075', 'Rất hài lòng', 93250.0, 'CASH','2023-11-15', 1750.0, 5,60000, 'KH02', 'DH075','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD076', 'Rất hài lòng', 351500.0, 'CASH','2023-11-16', 100500.0, 25,50000, 'KH08', 'DH076','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD077', 'Tốt', 509100.0, 'BANKING','2023-11-17', 49900.0, 10,60000, 'KH17', 'DH077','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD078', 'Rất hài lòng', 201500.0, 'MOMO','2023-11-18', 60500.0, 25,20000, 'KH03', 'DH078','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD079', 'Rất hài lòng', 278150.0, 'MOMO','2023-11-19', 122850.0, 35,50000, 'KH06', 'DH079','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD080', 'Bình Thường', 285650.0, 'MOMO','2023-11-20', 43350.0, 15,40000, 'KH01', 'DH080','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD081', 'Tốt', 421600.0, 'MOMO','2023-11-21', 42400.0, 10,40000, 'KH06', 'DH081','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD082', 'Rất hài lòng', 340000.0, 'BANKING','2023-11-22', 70000.0, 20,60000, 'KH11', 'DH082','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD083', 'Rất hài lòng', 84000.0, 'BANKING','2023-11-23', 6000.0, 10,30000, 'KH25', 'DH083','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD084', 'Tốt', 351750.0, 'BANKING','2023-11-24', 53250.0, 15,50000, 'KH15', 'DH084','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD085', 'Rất hài lòng', 445600.0, 'MOMO','2023-11-25', 22400.0, 5,20000, 'KH24', 'DH085','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD086', 'Tốt', 115500.0, 'MOMO','2023-11-26', 19500.0, 30,70000, 'KH16', 'DH086','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD087', 'Tốt', 221500.0, 'CASH','2023-11-27', 8500.0, 5,60000, 'KH25', 'DH087','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD088', 'Rất hài lòng', 161800.0, 'CASH','2023-11-28', 16200.0, 15,70000, 'KH09', 'DH088','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD089', 'Tốt', 361250.0, 'CASH','2023-11-29', 113750.0, 25,20000, 'KH13', 'DH089','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD090', 'Tốt', 144000.0, 'CASH','2023-11-30', 6000.0, 5,30000, 'KH14', 'DH090','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD091', 'Tốt', 167250.0, 'MOMO','2023-12-01', 7750.0, 5,20000, 'KH19', 'DH091','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD092', 'Rất hài lòng', 252550.0, 'MOMO','2023-12-02', 114450.0, 35,40000, 'KH30', 'DH092','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD093', 'Bình Thường', 157500.0, 'BANKING','2023-12-03', 42500.0, 25,30000, 'KH16', 'DH093','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD094', 'Tốt', 446900.0, 'CASH','2023-12-04', 219100.0, 35,40000, 'KH02', 'DH094','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD095', 'Rất hài lòng', 197500.0, 'MOMO','2023-12-05', 67500.0, 30,40000, 'KH30', 'DH095','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD096', 'Bình Thường', 313000.0, 'CASH','2023-12-06', 147000.0, 35,40000, 'KH27', 'DH096','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD097', 'Bình Thường', 175100.0, 'MOMO','2023-12-07', 13900.0, 10,50000, 'KH07', 'DH097','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD098', 'Rất hài lòng', 121600.0, 'BANKING','2023-12-08', 14400.0, 15,40000, 'KH21', 'DH098','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD099', 'Tốt', 308000.0, 'CASH','2023-12-09', 102000.0, 30,70000, 'KH19', 'DH099','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD100', 'Bình Thường', 407250.0, 'BANKING','2023-12-10', 197750.0, 35,40000, 'KH01', 'DH100','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD101', 'Rất hài lòng', 162050.0, 'MOMO','2023-12-11', 6950.0, 5,30000, 'KH23', 'DH101','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD102', 'Rất hài lòng', 403000.0, 'BANKING','2023-12-12', 37000.0, 10,70000, 'KH20', 'DH102','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD103', 'Tốt', 359900.0, 'CASH','2023-12-13', 156100.0, 35,70000, 'KH12', 'DH103','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD104', 'Rất hài lòng', 188000.0, 'CASH','2023-12-14', 42000.0, 20,20000, 'KH02', 'DH104','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD105', 'Rất hài lòng', 245000.0, 'BANKING','2023-12-15', 25000.0, 10,20000, 'KH22', 'DH105','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD106', 'Rất hài lòng', 334500.0, 'CASH','2023-12-16', 55500.0, 15,20000, 'KH18', 'DH106','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD107', 'Bình Thường', 125000.0, 'BANKING','2023-12-17', 5000.0, 5,30000, 'KH01', 'DH107','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD108', 'Rất hài lòng', 179250.0, 'BANKING','2023-12-18', 85750.0, 35,20000, 'KH25', 'DH108','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD109', 'Rất hài lòng', 235750.0, 'MOMO','2023-12-19', 89250.0, 35,70000, 'KH13', 'DH109','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD110', 'Rất hài lòng', 106500.0, 'BANKING','2023-12-20', 3500.0, 5,40000, 'KH12', 'DH110','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD111', 'Rất hài lòng', 130000.0, 'BANKING','2023-12-21', 30000.0, 25,40000, 'KH14', 'DH111','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD112', 'Tốt', 724900.0, 'MOMO','2023-12-22', 119100.0, 15,50000, 'KH27', 'DH112','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD113', 'Bình Thường', 278500.0, 'BANKING','2023-12-23', 106500.0, 30,30000, 'KH08', 'DH113','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD114', 'Tốt', 239000.0, 'BANKING','2023-12-24', 81000.0, 30,50000, 'KH23', 'DH114','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD115', 'Bình Thường', 463800.0, 'CASH','2023-12-25', 228200.0, 35,40000, 'KH01', 'DH115','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD116', 'Bình Thường', 247200.0, 'MOMO','2023-12-26', 51800.0, 20,40000, 'KH01', 'DH116','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD117', 'Tốt', 262800.0, 'CASH','2023-12-27', 11200.0, 5,50000, 'KH24', 'DH117','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD118', 'Rất hài lòng', 569400.0, 'CASH','2023-12-28', 56600.0, 10,60000, 'KH08', 'DH118','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD119', 'Bình Thường', 277250.0, 'CASH','2023-12-29', 85750.0, 25,20000, 'KH09', 'DH119','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD120', 'Rất hài lòng', 124000.0, 'CASH','2023-12-30', 21000.0, 20,40000, 'KH14', 'DH120','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD121', 'Tốt', 292800.0, 'MOMO','2023-12-31', 63200.0, 20,40000, 'KH02', 'DH121','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD122', 'Rất hài lòng', 120000.0, 'BANKING','2024-01-01', 25000.0, 20,20000, 'KH09', 'DH122','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD123', 'Bình Thường', 368750.0, 'BANKING','2024-01-02', 166250.0, 35,60000, 'KH04', 'DH123','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD124', 'Tốt', 523200.0, 'BANKING','2024-01-03', 202800.0, 30,50000, 'KH08', 'DH124','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD125', 'Tốt', 451500.0, 'BANKING','2024-01-04', 43500.0, 10,60000, 'KH26', 'DH125','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD126', 'Bình Thường', 394250.0, 'MOMO','2024-01-05', 190750.0, 35,40000, 'KH17', 'DH126','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD127', 'Rất hài lòng', 277250.0, 'MOMO','2024-01-06', 75750.0, 25,50000, 'KH28', 'DH127','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD128', 'Rất hài lòng', 200100.0, 'MOMO','2024-01-07', 18900.0, 10,30000, 'KH30', 'DH128','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD129', 'Tốt', 104500.0, 'BANKING','2024-01-08', 45500.0, 35,20000, 'KH12', 'DH129','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD130', 'Tốt', 563600.0, 'MOMO','2024-01-09', 128400.0, 20,50000, 'KH08', 'DH130','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD131', 'Rất hài lòng', 271500.0, 'MOMO','2024-01-10', 103500.0, 30,30000, 'KH03', 'DH131','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD132', 'Rất hài lòng', 95250.0, 'MOMO','2024-01-11', 9750.0, 15,40000, 'KH30', 'DH132','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD133', 'Rất hài lòng', 149000.0, 'MOMO','2024-01-12', 51000.0, 30,30000, 'KH22', 'DH133','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD134', 'Tốt', 496150.0, 'MOMO','2024-01-13', 234850.0, 35,60000, 'KH01', 'DH134','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD135', 'Bình Thường', 284550.0, 'BANKING','2024-01-14', 142450.0, 35,20000, 'KH07', 'DH135','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD136', 'Bình Thường', 67500.0, 'BANKING','2024-01-15', 12500.0, 25,30000, 'KH20', 'DH136','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD137', 'Bình Thường', 279600.0, 'CASH','2024-01-16', 57400.0, 20,50000, 'KH12', 'DH137','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD138', 'Tốt', 262950.0, 'CASH','2024-01-17', 34050.0, 15,70000, 'KH11', 'DH138','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD139', 'Rất hài lòng', 72000.0, 'MOMO','2024-01-18', 13000.0, 20,20000, 'KH30', 'DH139','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD140', 'Bình Thường', 202500.0, 'CASH','2024-01-19', 47500.0, 25,60000, 'KH25', 'DH140','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD141', 'Tốt', 202100.0, 'CASH','2024-01-20', 16900.0, 10,50000, 'KH04', 'DH141','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD142', 'Rất hài lòng', 85100.0, 'BANKING','2024-01-21', 18900.0, 35,50000, 'KH11', 'DH142','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD143', 'Bình Thường', 369650.0, 'BANKING','2024-01-22', 17350.0, 5,40000, 'KH18', 'DH143','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD144', 'Bình Thường', 111250.0, 'BANKING','2024-01-23', 43750.0, 35,30000, 'KH28', 'DH144','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD145', 'Tốt', 771050.0, 'MOMO','2024-01-24', 37950.0, 5,50000, 'KH30', 'DH145','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD146', 'Bình Thường', 369250.0, 'CASH','2024-01-25', 15750.0, 5,70000, 'KH23', 'DH146','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD147', 'Tốt', 248450.0, 'BANKING','2024-01-26', 38550.0, 15,30000, 'KH26', 'DH147','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD148', 'Tốt', 216000.0, 'CASH','2024-01-27', 39000.0, 20,60000, 'KH06', 'DH148','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD149', 'Bình Thường', 281250.0, 'BANKING','2024-01-28', 13750.0, 5,20000, 'KH29', 'DH149','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD150', 'Rất hài lòng', 347850.0, 'CASH','2024-01-29', 171150.0, 35,30000, 'KH04', 'DH150','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD151', 'Bình Thường', 313500.0, 'CASH','2024-01-30', 31500.0, 10,30000, 'KH12', 'DH151','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD152', 'Rất hài lòng', 152000.0, 'MOMO','2024-01-31', 23000.0, 20,60000, 'KH23', 'DH152','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD153', 'Bình Thường', 391500.0, 'CASH','2024-02-01', 18500.0, 5,40000, 'KH15', 'DH153','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD154', 'Rất hài lòng', 115250.0, 'BANKING','2024-02-02', 9750.0, 15,60000, 'KH27', 'DH154','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD155', 'Tốt', 166000.0, 'MOMO','2024-02-03', 54000.0, 30,40000, 'KH14', 'DH155','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD156', 'Bình Thường', 191500.0, 'CASH','2024-02-04', 13500.0, 10,70000, 'KH23', 'DH156','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD157', 'Bình Thường', 122500.0, 'BANKING','2024-02-05', 27500.0, 25,40000, 'KH04', 'DH157','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD158', 'Tốt', 183750.0, 'BANKING','2024-02-06', 61250.0, 35,70000, 'KH23', 'DH158','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD159', 'Rất hài lòng', 348700.0, 'BANKING','2024-02-07', 17300.0, 5,20000, 'KH03', 'DH159','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD160', 'Rất hài lòng', 361500.0, 'BANKING','2024-02-08', 33500.0, 10,60000, 'KH30', 'DH160','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD161', 'Bình Thường', 171300.0, 'BANKING','2024-02-09', 26700.0, 15,20000, 'KH04', 'DH161','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD162', 'Tốt', 153750.0, 'BANKING','2024-02-10', 61250.0, 35,40000, 'KH22', 'DH162','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD163', 'Bình Thường', 193250.0, 'MOMO','2024-02-11', 47750.0, 25,50000, 'KH13', 'DH163','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD164', 'Tốt', 154000.0, 'MOMO','2024-02-12', 21000.0, 20,70000, 'KH09', 'DH164','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD165', 'Rất hài lòng', 70000.0, 'CASH','2024-02-13', 10000.0, 20,30000, 'KH17', 'DH165','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD166', 'Rất hài lòng', 134000.0, 'MOMO','2024-02-14', 16000.0, 20,70000, 'KH28', 'DH166','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD167', 'Tốt', 322000.0, 'CASH','2024-02-15', 84000.0, 25,70000, 'KH03', 'DH167','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD168', 'Rất hài lòng', 198250.0, 'BANKING','2024-02-16', 6750.0, 5,70000, 'KH19', 'DH168','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD169', 'Bình Thường', 283000.0, 'BANKING','2024-02-17', 27000.0, 10,40000, 'KH14', 'DH169','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD170', 'Bình Thường', 298250.0, 'CASH','2024-02-18', 92750.0, 25,20000, 'KH03', 'DH170','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD171', 'Tốt', 271300.0, 'CASH','2024-02-19', 12700.0, 5,30000, 'KH05', 'DH171','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD172', 'Bình Thường', 374900.0, 'CASH','2024-02-20', 17100.0, 5,50000, 'KH21', 'DH172','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD173', 'Bình Thường', 116800.0, 'BANKING','2024-02-21', 19200.0, 20,40000, 'KH14', 'DH173','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD174', 'Tốt', 168000.0, 'BANKING','2024-02-22', 32000.0, 20,40000, 'KH18', 'DH174','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD175', 'Bình Thường', 90750.0, 'MOMO','2024-02-23', 20250.0, 25,30000, 'KH07', 'DH175','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD176', 'Tốt', 248500.0, 'MOMO','2024-02-24', 76500.0, 30,70000, 'KH18', 'DH176','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD177', 'Bình Thường', 241000.0, 'CASH','2024-02-25', 9000.0, 5,70000, 'KH22', 'DH177','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD178', 'Rất hài lòng', 184750.0, 'MOMO','2024-02-26', 20250.0, 15,70000, 'KH27', 'DH178','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD179', 'Tốt', 392000.0, 'MOMO','2024-02-27', 38000.0, 10,50000, 'KH29', 'DH179','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD180', 'Tốt', 342000.0, 'CASH','2024-02-28', 48000.0, 15,70000, 'KH24', 'DH180','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD181', 'Rất hài lòng', 432800.0, 'MOMO','2024-02-29', 21200.0, 5,30000, 'KH03', 'DH181','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD182', 'Bình Thường', 278500.0, 'MOMO','2024-03-01', 79500.0, 25,40000, 'KH18', 'DH182','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD183', 'Tốt', 310000.0, 'MOMO','2024-03-02', 60000.0, 20,70000, 'KH09', 'DH183','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD184', 'Bình Thường', 60300.0, 'BANKING','2024-03-03', 21700.0, 35,20000, 'KH12', 'DH184','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD185', 'Rất hài lòng', 533250.0, 'BANKING','2024-03-04', 81750.0, 15,70000, 'KH01', 'DH185','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD186', 'Bình Thường', 102000.0, 'MOMO','2024-03-05', 18000.0, 30,60000, 'KH29', 'DH186','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD187', 'Tốt', 378000.0, 'CASH','2024-03-06', 77000.0, 20,70000, 'KH28', 'DH187','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD188', 'Rất hài lòng', 148000.0, 'MOMO','2024-03-07', 12000.0, 10,40000, 'KH19', 'DH188','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD189', 'Bình Thường', 269750.0, 'MOMO','2024-03-08', 35250.0, 15,70000, 'KH28', 'DH189','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD190', 'Rất hài lòng', 68000.0, 'MOMO','2024-03-09', 12000.0, 30,40000, 'KH30', 'DH190','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD191', 'Rất hài lòng', 417400.0, 'MOMO','2023-12-10', 208600.0, 35,30000, 'KH02', 'DH191','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD192', 'Bình Thường', 137400.0, 'BANKING','2023-12-10', 8600.0, 10,60000, 'KH08', 'DH192','KM03');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD193', 'Bình Thường', 141250.0, 'MOMO','2023-12-10', 43750.0, 35,60000, 'KH26', 'DH193','KM04');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD194', 'Rất hài lòng', 196000.0, 'MOMO','2023-12-10', 14000.0, 10,70000, 'KH19', 'DH194','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD195', 'Tốt', 423600.0, 'CASH','2023-12-10', 40400.0, 10,60000, 'KH30', 'DH195','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD196', 'Bình Thường', 378700.0, 'BANKING','2023-12-10', 132300.0, 30,70000, 'KH03', 'DH196','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD197', 'Rất hài lòng', 257300.0, 'CASH','2023-12-10', 101700.0, 30,20000, 'KH13', 'DH197','KM01');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD198', 'Rất hài lòng', 200000.0, 'CASH','2023-12-10', 60000.0, 30,60000, 'KH13', 'DH198','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD199', 'Tốt', 570200.0, 'BANKING','2023-12-10', 91800.0, 15,50000, 'KH19', 'DH199','KM02');
-INSERT INTO Bill (Bill_ID,Feedback,Total_Price,Method, Bill_Date,Discount_Price, Discount_Percent, Delivery_Fee, Customer_ID, Order_ID,Promotion_ID) VALUES  ('HD200', 'Rất hài lòng', 240500.0, 'BANKING','2023-12-10', 9500.0, 5,60000, 'KH24', 'DH200','KM01');
-
-
-CREATE TABLE Product (
-    Product_ID varchar(256) NOT NULL,
-    Name VARCHAR(256) NOT NULL,
-    Price DECIMAL(10, 2) NOT NULL,
-    Description TEXT,
-    Photo VARCHAR(256),
-    Item_ID VARCHAR(10),
-    Size VARCHAR(5),
-    Category VARCHAR(256)
-);
-
-INSERT INTO Product (Product_ID,Name, Price, Description, Photo, Size, Category)
-VALUES
-('P01', 'Bánh Mì Heo Quay', 30000.00, 'Bánh mì thơm ngon kết hợp với lớp thịt heo quay giòn tan, tạo nên một trải nghiệm ẩm thực độc đáo và ngon miệng cho bữa sáng đầy năng lượng.', 'https://bit.ly/p01banhmi', NULL, 'Đồ ăn'),
-('P02', 'Mì Spaghetti Sốt Bò Bằm', 35000.00, 'Spaghetti mềm dai kèm theo sốt bò bằm thơm ngon, tạo nên một bữa ăn Ý truyền thống, hấp dẫn vị giác.', 'https://bit.ly/P02mispaghetti', NULL, 'Đồ ăn'),
-('P03', 'Hamburger Gà Giòn', 30000.00, 'Hamburger tuyệt vời với lớp gà giòn giòn, thêm cùng các gia vị tinh tế, đảm bảo là một trải nghiệm ăn uống hết sức ngon miệng.', 'https://bit.ly/P03hamburger', NULL, 'Đồ ăn'),
-('P04', 'Khoay Tây Chiên', 25000.00, 'Khoai tây vàng giòn, chiên tới khi hấp dẫn và thơm ngon, là món ăn nhẹ hoàn hảo hoặc là món kèm tuyệt vời.', 'https://bit.ly/P04khoaitaychien', NULL, 'Đồ ăn'),
-('P05', 'Salad Sốt Mè', 20000.00, 'Salad tươi mát với rau sống và sốt mè béo ngậy, mang lại sự tinh tế và dinh dưỡng cho bữa ăn lành mạnh.', '', NULL, 'Đồ ăn'),
-('P06', 'Yogurt Dâu Tây', 25000.00, 'Yogurt mềm mịn kết hợp với hương vị ngọt ngào của dâu tây, là món tráng miệng hoàn hảo và lành mạnh.', 'https://bit.ly/P06dautay', NULL, 'Đồ ăn'),
-('P07', 'Bánh Tiramisu', 25000.00, 'Bánh Tiramisu đậm đà với lớp kem phô mai và cacao, mang lại hương vị hấp dẫn và khó cưỡng.', 'https://bit.ly/P07tiramisu', NULL, 'Đồ ăn'),
-('P08', 'Cà Phê Đen', 20000.00, 'Cà phê đen đậm đà, hương thơm mạnh mẽ, là sự lựa chọn lý tưởng cho những người yêu thích cảm giác tỉnh táo.', 'https://bit.ly/P13cfden', 'M', 'Thức uống'),
-('P09', 'Cà Phê Sữa', 22000.00, 'Cà phê sữa ngọt ngào, cân bằng hài hòa giữa đắng và ngọt, đem đến một trải nghiệm cà phê tuyệt vời.', 'https://bit.ly/P14cfsua', 'M', 'Thức uống'),
-('P10', 'Trà Ô Long Nhài Sữa', 30000.00, 'Trà ô long thơm lừng pha cùng hương nhài mềm mại, kết hợp với sữa tươi, tạo nên đồ uống thư giãn và thơm ngon.', 'https://bit.ly/P15olong', 'M', 'Thức uống'),
-('P11', 'Trà Lài Đác Thơm', 30000.00, 'Trà lài đi cùng là hạt đác, thơm tươi đem đến sự kết hợp tuyệt vời để làm dịu dàng vị giác, giải nhiệt trong ngày nắng nóng.', 'https://bit.ly/P16tralai', 'M', 'Thức uống'),
-('P12', 'Trà Đào Cam Sả', 30000.00, 'Hòa quyện giữa hương đào ngọt ngào, cam chua ngọt và mùi sả tinh tế, trà này đem đến cảm giác tươi mới và phấn khích.', 'https://bit.ly/P17tradao', 'M', 'Thức uống'),
-('P13', 'Cà Phê Đen', 25000.00, 'Cà phê đen đậm đà, hương thơm mạnh mẽ, là sự lựa chọn lý tưởng cho những người yêu thích cảm giác tỉnh táo.', 'https://bit.ly/P13cfden', 'L', 'Thức uống'),
-('P14', 'Cà Phê Sữa', 27000.00, 'Cà phê sữa ngọt ngào, cân bằng hài hòa giữa đắng và ngọt, đem đến một trải nghiệm cà phê tuyệt vời.', 'https://bit.ly/P14cfsua', 'L', 'Thức uống'),
-('P15', 'Trà Ô Long Nhài Sữa', 35000.00, 'Trà ô long thơm lừng pha cùng hương nhài mềm mại, kết hợp với sữa tươi, tạo nên đồ uống thư giãn và thơm ngon.', 'https://bit.ly/P15olong', 'L', 'Thức uống'),
-('P16', 'Trà Lài Đác Thơm', 35000.00, 'Trà lài đi cùng là hạt đác, thơm tươi đem đến sự kết hợp tuyệt vời để làm dịu dàng vị giác, giải nhiệt trong ngày nắng nóng.', 'https://bit.ly/P16tralai', 'L', 'Thức uống'),
-('P17', 'Trà Đào Cam Sả', 35000.00, 'Hòa quyện giữa hương đào ngọt ngào, cam chua ngọt và mùi sả tinh tế, trà này đem đến cảm giác tươi mới và phấn khích.', 'https://bit.ly/P17tradao', 'L', 'Thức uống'),
-('P18', 'CocaCola', 10000.00, 'Một chai CocaCola mát lạnh, một tinh thần sảng khoái.', 'https://bit.ly/P18cocacola', NULL, 'Thức uống');
-
-CREATE TABLE Combo (
-    Combo_ID varchar(256) NOT NULL,
-    Name VARCHAR(255) NOT NULL,
-    Description TEXT,
-    Price DECIMAL(10, 2) NOT NULL,
-    Photo VARCHAR(255)
-);
-
-INSERT INTO Combo (Combo_ID,Name, Description, Price, Photo)
-VALUES
-('C01', 'Khởi Đầu Vui Vẻ', 'Hãy bắt đầu ngày mới của bạn với sự kết hợp hoàn hảo giữa một ly cà phê sữa đậm đà và một chiếc bánh mì heo quay giòn tan, thơm lừng sẽ đưa bạn đến một trải nghiệm ẩm thực độc đáo.', 49000.00, 'https://bit.ly/C01khoidauvuive'),
-('C02', 'Bộ Ba Ăn Ý', 'Sự kết hợp vô cùng quen thuộc, một bữa trưa ngon miệng và đầy đủ năng lượng cùng với hamburger, khoai tây chiên giòn và một cốc Cocacola bùng nổ vị giác.', 59000.00, 'https://bit.ly/C02bobaany');
-
-CREATE TABLE Item (
-    Item_ID varchar(256) NOT NULL,
-    Product_ID varchar(256),
-    Combo_ID varchar(256)
-);
-
-INSERT INTO Item (Item_ID, Product_ID, Combo_ID)
-VALUES
-('MH01', 'P01', NULL),
-('MH02', 'P02', NULL),
-('MH03', 'P03', NULL),
-('MH04', 'P04', NULL),
-('MH05', 'P05', NULL),
-('MH06', 'P06', NULL),
-('MH07', 'P07', NULL),
-('MH08', 'P08', NULL),
-('MH09', 'P09', NULL),
-('MH10', 'P10', NULL),
-('MH11', 'P11', NULL),
-('MH12', 'P12', NULL),
-('MH13', 'P13', NULL),
-('MH14', 'P14', NULL),
-('MH15', 'P15', NULL),
-('MH16', 'P16', NULL),
-('MH17', 'P17', NULL),
-('MH18', 'P18', NULL),
-('MH19', NULL, 'C01'),
-('MH20', NULL, 'C02');
-
-CREATE TABLE Combo_List (
-    Combo_ID varchar(256) NOT NULL,
-    Product_ID varchar(256) NOT NULL,
-    Quantity INT NOT NULL
-);
-
-INSERT INTO Combo_List (Combo_ID, Product_ID, Quantity)
-VALUES
-('C01', 'P01', 1),
-('C01', 'P09', 1),
-('C02', 'P03', 1),
-('C02', 'P04', 1),
-('C02', 'P18', 1);
-
-CREATE TABLE `Event` (
-    Branch_ID varchar(256) NOT NULL,
-    Promotion_ID varchar(256) NOT NULL
-);
-
-INSERT INTO Event (Branch_ID, Promotion_ID)
-VALUES
-('CH01', 'KM02'),
-('CH01', 'KM03'),
-('CH03', 'KM04'),
-('CH05', 'KM04');
 
 CREATE TABLE Order_Line (
     Order_ID varchar(256) NOT NULL,
@@ -1244,222 +1066,53 @@ INSERT INTO Order_Line (Order_ID, Item_ID, Quantity, Total_Price) VALUES ('DH200
 INSERT INTO Order_Line (Order_ID, Item_ID, Quantity, Total_Price) VALUES ('DH200', 'MH12', 1, 30000.00);
 INSERT INTO Order_Line (Order_ID, Item_ID, Quantity, Total_Price) VALUES ('DH200', 'MH05', 3, 60000.00);
 
+DELIMITER $$
+CREATE TRIGGER `calculate_order_total` AFTER INSERT ON `order_line` FOR EACH ROW BEGIN
+    DECLARE order_total DECIMAL(10, 2);
+    
+    -- Calculate the total price for the order
+    SELECT SUM(Total_Price) INTO order_total
+    FROM Order_Line
+    WHERE Order_ID = NEW.Order_ID;
+    
+    -- Update the total price in the Order table
+    UPDATE `Order`
+    SET Total_Price = order_total
+    WHERE Order_ID = NEW.Order_ID;
+END
+$$
+DELIMITER ;
 
 
-
-CREATE TABLE Transport (
-	Transport_ID varchar(256) NOT NULL,
-    Bill_ID varchar(256) NOT NULL,
+CREATE TABLE Payment (
+    Order_ID varchar(256) NOT NULL,
+    Method ENUM('CASH', 'MOMO', 'BANKING') NOT NULL,
     Delivery_ID varchar(256) NOT NULL,
-    Delivery_Date DATE,
-    Shipper_Name VARCHAR(255),
-    Shipper_Phone VARCHAR(20),
-    Shipper_Vehicle VARCHAR(255),
-    Shipper_VehicleID VARCHAR(255)
+    Promotion_ID varchar(256)
 );
 
-INSERT INTO Transport (Transport_ID, Bill_ID, Delivery_ID, Delivery_Date, Shipper_Name, Shipper_Phone, Shipper_Vehicle, Shipper_VehicleID)
-VALUES
-('VC001', 'HD001', 'GH03', '2023-11-29', 'Nguyễn Văn A', '0123456789', 'Xe đạp', '59A1-123.45'),
-('VC002', 'HD002', 'GH03', '2023-11-28', 'Nguyễn Văn A', '0123456789', 'Xe máy', '59C2-678.90'),
-('VC003', 'HD003', 'GH03', '2023-11-29', 'Lê Thị B', '0123456790', 'Xe đạp', '59C2-678.90'),
-('VC004', 'HD004', 'GH03', '2023-11-29', 'Lê Thị B', '0123456791', 'Xe tải', '59A3-234.56'),
-('VC005', 'HD005', 'GH03', '2023-11-30', 'Phạm Thị D', '0123456790', 'Xe đạp', '59D4-789.01'),
-('VC006', 'HD006', 'GH03', '2023-11-28', 'Nguyễn Văn A', '0123456791', 'Xe tải', '59D4-789.01'),
-('VC007', 'HD007', 'GH03', '2023-11-30', 'Lê Thị B', '0123456789', 'Xe tải', '59A3-234.56'),
-('VC008', 'HD008', 'GH01', '2023-11-30', 'Lê Thị B', '0123456792', 'Xe tải', '59C2-678.90'),
-('VC009', 'HD009', 'GH01', '2023-11-28', 'Lê Thị B', '0123456790', 'Xe máy', '59D4-789.01'),
-('VC010', 'HD010', 'GH01', '2023-11-28', 'Trần Văn C', '0123456792', 'Xe tải', '59A1-123.45'),
-('VC011', 'HD011', 'GH03', '2023-11-30', 'Lê Thị B', '0123456789', 'Xe đạp', '59C2-678.90'),
-('VC012', 'HD012', 'GH01', '2023-11-29', 'Lê Thị B', '0123456791', 'Xe tải', '59A1-123.45'),
-('VC013', 'HD013', 'GH01', '2023-11-29', 'Lê Thị B', '0123456791', 'Xe đạp', '59C2-678.90'),
-('VC014', 'HD014', 'GH01', '2023-11-30', 'Phạm Thị D', '0123456790', 'Xe máy', '59A3-234.56'),
-('VC015', 'HD015', 'GH03', '2023-11-30', 'Nguyễn Văn A', '0123456789', 'Xe đạp', '59A3-234.56'),
-('VC016', 'HD016', 'GH03', '2023-11-28', 'Nguyễn Văn A', '0123456792', 'Xe tải', '59A1-123.45'),
-('VC017', 'HD017', 'GH01', '2023-11-28', 'Lê Thị B', '0123456791', 'Xe đạp', '59C2-678.90'),
-('VC018', 'HD018', 'GH02', '2023-11-29', 'Nguyễn Văn A', '0123456792', 'Xe tải', '59A1-123.45'),
-('VC019', 'HD019', 'GH01', '2023-11-29', 'Trần Văn C', '0123456791', 'Xe máy', '59A1-123.45'),
-('VC020', 'HD020', 'GH01', '2023-11-29', 'Nguyễn Văn A', '0123456789', 'Xe đạp', '59D4-789.01'),
-('VC021', 'HD021', 'GH03', '2023-11-28', 'Lê Thị B', '0123456791', 'Xe đạp', '59D4-789.01'),
-('VC022', 'HD022', 'GH01', '2023-11-30', 'Nguyễn Văn A', '0123456789', 'Xe máy', '59C2-678.90'),
-('VC023', 'HD023', 'GH03', '2023-11-28', 'Nguyễn Văn A', '0123456789', 'Xe tải', '59D4-789.01'),
-('VC024', 'HD024', 'GH01', '2023-11-30', 'Lê Thị B', '0123456792', 'Xe đạp', '59D4-789.01'),
-('VC025', 'HD025', 'GH03', '2023-11-30', 'Phạm Thị D', '0123456790', 'Xe máy', '59A3-234.56'),
-('VC026', 'HD026', 'GH03', '2023-11-28', 'Lê Thị B', '0123456792', 'Xe đạp', '59D4-789.01'),
-('VC027', 'HD027', 'GH02', '2023-11-29', 'Trần Văn C', '0123456792', 'Xe tải', '59D4-789.01'),
-('VC028', 'HD028', 'GH02', '2023-11-30', 'Nguyễn Văn A', '0123456789', 'Xe đạp', '59A3-234.56'),
-('VC029', 'HD029', 'GH02', '2023-11-29', 'Phạm Thị D', '0123456792', 'Xe đạp', '59D4-789.01'),
-('VC030', 'HD030', 'GH01', '2023-11-28', 'Nguyễn Văn A', '0123456792', 'Xe tải', '59C2-678.90'),
-('VC031', 'HD031', 'GH02', '2023-11-28', 'Phạm Thị D', '0123456792', 'Xe đạp', '59D4-789.01'),
-('VC032', 'HD032', 'GH02', '2023-11-28', 'Nguyễn Văn A', '0123456792', 'Xe đạp', '59A1-123.45'),
-('VC033', 'HD033', 'GH02', '2023-11-28', 'Lê Thị B', '0123456789', 'Xe máy', '59D4-789.01'),
-('VC034', 'HD034', 'GH02', '2023-11-29', 'Phạm Thị D', '0123456791', 'Xe máy', '59C2-678.90'),
-('VC035', 'HD035', 'GH03', '2023-11-30', 'Nguyễn Văn A', '0123456790', 'Xe đạp', '59D4-789.01'),
-('VC036', 'HD036', 'GH01', '2023-11-28', 'Lê Thị B', '0123456791', 'Xe đạp', '59D4-789.01'),
-('VC037', 'HD037', 'GH02', '2023-11-29', 'Phạm Thị D', '0123456790', 'Xe đạp', '59C2-678.90'),
-('VC038', 'HD038', 'GH01', '2023-11-29', 'Trần Văn C', '0123456792', 'Xe tải', '59A3-234.56'),
-('VC039', 'HD039', 'GH03', '2023-11-30', 'Lê Thị B', '0123456792', 'Xe đạp', '59A1-123.45'),
-('VC040', 'HD040', 'GH02', '2023-11-30', 'Trần Văn C', '0123456791', 'Xe đạp', '59D4-789.01'),
-('VC041', 'HD041', 'GH03', '2023-11-28', 'Trần Văn C', '0123456789', 'Xe máy', '59C2-678.90'),
-('VC042', 'HD042', 'GH01', '2023-11-29', 'Nguyễn Văn A', '0123456791', 'Xe đạp', '59C2-678.90'),
-('VC043', 'HD043', 'GH02', '2023-11-28', 'Trần Văn C', '0123456789', 'Xe đạp', '59A1-123.45'),
-('VC044', 'HD044', 'GH01', '2023-11-30', 'Nguyễn Văn A', '0123456791', 'Xe máy', '59A3-234.56'),
-('VC045', 'HD045', 'GH02', '2023-11-28', 'Nguyễn Văn A', '0123456789', 'Xe máy', '59D4-789.01'),
-('VC046', 'HD046', 'GH01', '2023-11-29', 'Trần Văn C', '0123456792', 'Xe đạp', '59A3-234.56'),
-('VC047', 'HD047', 'GH03', '2023-11-29', 'Lê Thị B', '0123456792', 'Xe tải', '59C2-678.90'),
-('VC048', 'HD048', 'GH03', '2023-11-29', 'Trần Văn C', '0123456792', 'Xe đạp', '59C2-678.90'),
-('VC049', 'HD049', 'GH01', '2023-11-28', 'Nguyễn Văn A', '0123456790', 'Xe đạp', '59A3-234.56'),
-('VC050', 'HD050', 'GH02', '2023-11-28', 'Phạm Thị D', '0123456791', 'Xe đạp', '59A3-234.56'),
-('VC051', 'HD051', 'GH02', '2023-11-28', 'Lê Thị B', '0123456790', 'Xe đạp', '59A1-123.45'),
-('VC052', 'HD052', 'GH02', '2023-11-28', 'Phạm Thị D', '0123456790', 'Xe tải', '59D4-789.01'),
-('VC053', 'HD053', 'GH03', '2023-11-29', 'Trần Văn C', '0123456791', 'Xe đạp', '59A3-234.56'),
-('VC054', 'HD054', 'GH03', '2023-11-30', 'Nguyễn Văn A', '0123456789', 'Xe tải', '59A3-234.56'),
-('VC055', 'HD055', 'GH01', '2023-11-29', 'Trần Văn C', '0123456791', 'Xe tải', '59D4-789.01'),
-('VC056', 'HD056', 'GH01', '2023-11-29', 'Trần Văn C', '0123456790', 'Xe tải', '59A3-234.56'),
-('VC057', 'HD057', 'GH03', '2023-11-30', 'Trần Văn C', '0123456792', 'Xe tải', '59D4-789.01'),
-('VC058', 'HD058', 'GH02', '2023-11-30', 'Phạm Thị D', '0123456791', 'Xe đạp', '59D4-789.01'),
-('VC059', 'HD059', 'GH01', '2023-11-30', 'Nguyễn Văn A', '0123456791', 'Xe máy', '59A3-234.56'),
-('VC060', 'HD060', 'GH03', '2023-11-30', 'Phạm Thị D', '0123456789', 'Xe đạp', '59A1-123.45'),
-('VC061', 'HD061', 'GH01', '2023-11-28', 'Phạm Thị D', '0123456792', 'Xe tải', '59A1-123.45'),
-('VC062', 'HD062', 'GH03', '2023-11-28', 'Lê Thị B', '0123456790', 'Xe đạp', '59A1-123.45'),
-('VC063', 'HD063', 'GH02', '2023-11-30', 'Phạm Thị D', '0123456790', 'Xe đạp', '59C2-678.90'),
-('VC064', 'HD064', 'GH01', '2023-11-30', 'Trần Văn C', '0123456792', 'Xe tải', '59A3-234.56'),
-('VC065', 'HD065', 'GH01', '2023-11-30', 'Lê Thị B', '0123456790', 'Xe máy', '59A3-234.56'),
-('VC066', 'HD066', 'GH01', '2023-11-30', 'Lê Thị B', '0123456789', 'Xe đạp', '59C2-678.90'),
-('VC067', 'HD067', 'GH01', '2023-11-29', 'Phạm Thị D', '0123456789', 'Xe đạp', '59C2-678.90'),
-('VC068', 'HD068', 'GH03', '2023-11-28', 'Lê Thị B', '0123456791', 'Xe máy', '59D4-789.01'),
-('VC069', 'HD069', 'GH01', '2023-11-29', 'Nguyễn Văn A', '0123456790', 'Xe tải', '59A3-234.56'),
-('VC070', 'HD070', 'GH01', '2023-11-29', 'Nguyễn Văn A', '0123456791', 'Xe đạp', '59C2-678.90'),
-('VC071', 'HD071', 'GH01', '2023-11-30', 'Lê Thị B', '0123456790', 'Xe tải', '59C2-678.90'),
-('VC072', 'HD072', 'GH03', '2023-11-29', 'Phạm Thị D', '0123456791', 'Xe tải', '59D4-789.01'),
-('VC073', 'HD073', 'GH01', '2023-11-29', 'Lê Thị B', '0123456792', 'Xe đạp', '59A3-234.56'),
-('VC074', 'HD074', 'GH02', '2023-11-29', 'Trần Văn C', '0123456789', 'Xe tải', '59A1-123.45'),
-('VC075', 'HD075', 'GH02', '2023-11-28', 'Nguyễn Văn A', '0123456789', 'Xe máy', '59A3-234.56'),
-('VC076', 'HD076', 'GH02', '2023-11-29', 'Lê Thị B', '0123456789', 'Xe tải', '59C2-678.90'),
-('VC077', 'HD077', 'GH02', '2023-11-28', 'Phạm Thị D', '0123456791', 'Xe đạp', '59A3-234.56'),
-('VC078', 'HD078', 'GH03', '2023-11-30', 'Phạm Thị D', '0123456790', 'Xe máy', '59C2-678.90'),
-('VC079', 'HD079', 'GH02', '2023-11-29', 'Lê Thị B', '0123456790', 'Xe tải', '59A3-234.56'),
-('VC080', 'HD080', 'GH01', '2023-11-28', 'Trần Văn C', '0123456792', 'Xe tải', '59A1-123.45'),
-('VC081', 'HD081', 'GH01', '2023-11-29', 'Nguyễn Văn A', '0123456789', 'Xe đạp', '59A1-123.45'),
-('VC082', 'HD082', 'GH03', '2023-11-29', 'Lê Thị B', '0123456790', 'Xe máy', '59C2-678.90'),
-('VC083', 'HD083', 'GH01', '2023-11-29', 'Nguyễn Văn A', '0123456792', 'Xe đạp', '59C2-678.90'),
-('VC084', 'HD084', 'GH01', '2023-11-29', 'Nguyễn Văn A', '0123456791', 'Xe đạp', '59A1-123.45'),
-('VC085', 'HD085', 'GH02', '2023-11-28', 'Phạm Thị D', '0123456791', 'Xe tải', '59A1-123.45'),
-('VC086', 'HD086', 'GH03', '2023-11-30', 'Nguyễn Văn A', '0123456790', 'Xe máy', '59A1-123.45'),
-('VC087', 'HD087', 'GH02', '2023-11-28', 'Nguyễn Văn A', '0123456789', 'Xe tải', '59A1-123.45'),
-('VC088', 'HD088', 'GH01', '2023-11-28', 'Phạm Thị D', '0123456792', 'Xe máy', '59D4-789.01'),
-('VC089', 'HD089', 'GH03', '2023-11-28', 'Trần Văn C', '0123456790', 'Xe máy', '59A3-234.56'),
-('VC090', 'HD090', 'GH02', '2023-11-29', 'Lê Thị B', '0123456791', 'Xe máy', '59A1-123.45'),
-('VC091', 'HD091', 'GH01', '2023-11-28', 'Phạm Thị D', '0123456790', 'Xe tải', '59A3-234.56'),
-('VC092', 'HD092', 'GH01', '2023-11-28', 'Nguyễn Văn A', '0123456791', 'Xe đạp', '59A3-234.56'),
-('VC093', 'HD093', 'GH02', '2023-11-28', 'Phạm Thị D', '0123456791', 'Xe đạp', '59A1-123.45'),
-('VC094', 'HD094', 'GH03', '2023-11-28', 'Lê Thị B', '0123456792', 'Xe máy', '59D4-789.01'),
-('VC095', 'HD095', 'GH03', '2023-11-29', 'Phạm Thị D', '0123456789', 'Xe đạp', '59D4-789.01'),
-('VC096', 'HD096', 'GH02', '2023-11-29', 'Phạm Thị D', '0123456792', 'Xe đạp', '59A1-123.45'),
-('VC097', 'HD097', 'GH03', '2023-11-30', 'Lê Thị B', '0123456789', 'Xe máy', '59C2-678.90'),
-('VC098', 'HD098', 'GH03', '2023-11-30', 'Trần Văn C', '0123456792', 'Xe máy', '59A1-123.45'),
-('VC099', 'HD099', 'GH03', '2023-11-30', 'Lê Thị B', '0123456792', 'Xe máy', '59C2-678.90'),
-('VC100', 'HD100', 'GH01', '2023-11-28', 'Lê Thị B', '0123456790', 'Xe máy', '59D4-789.01'),
-('VC101', 'HD101', 'GH02', '2023-11-28', 'Nguyễn Văn A', '0123456792', 'Xe tải', '59D4-789.01'),
-('VC102', 'HD102', 'GH02', '2023-11-30', 'Nguyễn Văn A', '0123456790', 'Xe máy', '59A3-234.56'),
-('VC103', 'HD103', 'GH01', '2023-11-29', 'Trần Văn C', '0123456792', 'Xe tải', '59D4-789.01'),
-('VC104', 'HD104', 'GH02', '2023-11-29', 'Nguyễn Văn A', '0123456792', 'Xe tải', '59C2-678.90'),
-('VC105', 'HD105', 'GH01', '2023-11-28', 'Nguyễn Văn A', '0123456791', 'Xe máy', '59A1-123.45'),
-('VC106', 'HD106', 'GH03', '2023-11-28', 'Lê Thị B', '0123456792', 'Xe tải', '59A3-234.56'),
-('VC107', 'HD107', 'GH03', '2023-11-29', 'Nguyễn Văn A', '0123456789', 'Xe tải', '59C2-678.90'),
-('VC108', 'HD108', 'GH02', '2023-11-29', 'Trần Văn C', '0123456792', 'Xe máy', '59D4-789.01'),
-('VC109', 'HD109', 'GH03', '2023-11-28', 'Nguyễn Văn A', '0123456789', 'Xe đạp', '59A3-234.56'),
-('VC110', 'HD110', 'GH01', '2023-11-28', 'Lê Thị B', '0123456789', 'Xe đạp', '59D4-789.01'),
-('VC111', 'HD111', 'GH03', '2023-11-29', 'Trần Văn C', '0123456790', 'Xe máy', '59D4-789.01'),
-('VC112', 'HD112', 'GH02', '2023-11-29', 'Phạm Thị D', '0123456789', 'Xe đạp', '59C2-678.90'),
-('VC113', 'HD113', 'GH03', '2023-11-29', 'Trần Văn C', '0123456792', 'Xe máy', '59A3-234.56'),
-('VC114', 'HD114', 'GH02', '2023-11-29', 'Nguyễn Văn A', '0123456792', 'Xe tải', '59A1-123.45'),
-('VC115', 'HD115', 'GH01', '2023-11-30', 'Phạm Thị D', '0123456790', 'Xe máy', '59C2-678.90'),
-('VC116', 'HD116', 'GH01', '2023-11-30', 'Lê Thị B', '0123456789', 'Xe tải', '59C2-678.90'),
-('VC117', 'HD117', 'GH03', '2023-11-29', 'Lê Thị B', '0123456791', 'Xe máy', '59D4-789.01'),
-('VC118', 'HD118', 'GH02', '2023-11-28', 'Phạm Thị D', '0123456791', 'Xe tải', '59A3-234.56'),
-('VC119', 'HD119', 'GH02', '2023-11-29', 'Trần Văn C', '0123456790', 'Xe tải', '59C2-678.90'),
-('VC120', 'HD120', 'GH02', '2023-11-30', 'Phạm Thị D', '0123456789', 'Xe máy', '59A1-123.45'),
-('VC121', 'HD121', 'GH01', '2023-11-29', 'Nguyễn Văn A', '0123456790', 'Xe máy', '59A3-234.56'),
-('VC122', 'HD122', 'GH02', '2023-11-29', 'Nguyễn Văn A', '0123456792', 'Xe máy', '59A3-234.56'),
-('VC123', 'HD123', 'GH03', '2023-11-28', 'Nguyễn Văn A', '0123456790', 'Xe tải', '59C2-678.90'),
-('VC124', 'HD124', 'GH02', '2023-11-28', 'Trần Văn C', '0123456791', 'Xe tải', '59A1-123.45'),
-('VC125', 'HD125', 'GH01', '2023-11-28', 'Phạm Thị D', '0123456792', 'Xe máy', '59A1-123.45'),
-('VC126', 'HD126', 'GH01', '2023-11-30', 'Trần Văn C', '0123456789', 'Xe máy', '59C2-678.90'),
-('VC127', 'HD127', 'GH03', '2023-11-28', 'Lê Thị B', '0123456791', 'Xe tải', '59A3-234.56'),
-('VC128', 'HD128', 'GH03', '2023-11-30', 'Trần Văn C', '0123456790', 'Xe đạp', '59D4-789.01'),
-('VC129', 'HD129', 'GH02', '2023-11-28', 'Trần Văn C', '0123456789', 'Xe tải', '59C2-678.90'),
-('VC130', 'HD130', 'GH01', '2023-11-28', 'Lê Thị B', '0123456791', 'Xe máy', '59A3-234.56'),
-('VC131', 'HD131', 'GH03', '2023-11-30', 'Trần Văn C', '0123456790', 'Xe tải', '59A1-123.45'),
-('VC132', 'HD132', 'GH02', '2023-11-28', 'Lê Thị B', '0123456790', 'Xe máy', '59D4-789.01'),
-('VC133', 'HD133', 'GH01', '2023-11-29', 'Trần Văn C', '0123456791', 'Xe tải', '59C2-678.90'),
-('VC134', 'HD134', 'GH03', '2023-11-30', 'Nguyễn Văn A', '0123456791', 'Xe máy', '59A3-234.56'),
-('VC135', 'HD135', 'GH02', '2023-11-30', 'Phạm Thị D', '0123456790', 'Xe đạp', '59D4-789.01'),
-('VC136', 'HD136', 'GH03', '2023-11-28', 'Trần Văn C', '0123456792', 'Xe đạp', '59C2-678.90'),
-('VC137', 'HD137', 'GH01', '2023-11-28', 'Nguyễn Văn A', '0123456789', 'Xe đạp', '59C2-678.90'),
-('VC138', 'HD138', 'GH01', '2023-11-30', 'Phạm Thị D', '0123456789', 'Xe máy', '59A3-234.56'),
-('VC139', 'HD139', 'GH01', '2023-11-29', 'Phạm Thị D', '0123456792', 'Xe đạp', '59A3-234.56'),
-('VC140', 'HD140', 'GH03', '2023-11-30', 'Lê Thị B', '0123456792', 'Xe đạp', '59A3-234.56'),
-('VC141', 'HD141', 'GH03', '2023-11-28', 'Trần Văn C', '0123456789', 'Xe máy', '59D4-789.01'),
-('VC142', 'HD142', 'GH01', '2023-11-28', 'Nguyễn Văn A', '0123456792', 'Xe đạp', '59A3-234.56'),
-('VC143', 'HD143', 'GH01', '2023-11-30', 'Trần Văn C', '0123456790', 'Xe đạp', '59A1-123.45'),
-('VC144', 'HD144', 'GH02', '2023-11-30', 'Phạm Thị D', '0123456790', 'Xe máy', '59C2-678.90'),
-('VC145', 'HD145', 'GH03', '2023-11-30', 'Trần Văn C', '0123456790', 'Xe máy', '59D4-789.01'),
-('VC146', 'HD146', 'GH03', '2023-11-30', 'Phạm Thị D', '0123456792', 'Xe đạp', '59A3-234.56'),
-('VC147', 'HD147', 'GH01', '2023-11-28', 'Trần Văn C', '0123456789', 'Xe máy', '59A3-234.56'),
-('VC148', 'HD148', 'GH03', '2023-11-28', 'Nguyễn Văn A', '0123456789', 'Xe máy', '59D4-789.01'),
-('VC149', 'HD149', 'GH03', '2023-11-30', 'Phạm Thị D', '0123456790', 'Xe đạp', '59C2-678.90'),
-('VC150', 'HD150', 'GH01', '2023-11-30', 'Phạm Thị D', '0123456789', 'Xe tải', '59C2-678.90'),
-('VC151', 'HD151', 'GH03', '2023-11-29', 'Phạm Thị D', '0123456789', 'Xe máy', '59C2-678.90'),
-('VC152', 'HD152', 'GH02', '2023-11-29', 'Lê Thị B', '0123456792', 'Xe tải', '59C2-678.90'),
-('VC153', 'HD153', 'GH01', '2023-11-30', 'Trần Văn C', '0123456790', 'Xe máy', '59C2-678.90'),
-('VC154', 'HD154', 'GH02', '2023-11-29', 'Lê Thị B', '0123456792', 'Xe máy', '59D4-789.01'),
-('VC155', 'HD155', 'GH01', '2023-11-30', 'Phạm Thị D', '0123456792', 'Xe đạp', '59A1-123.45'),
-('VC156', 'HD156', 'GH03', '2023-11-30', 'Trần Văn C', '0123456791', 'Xe tải', '59A1-123.45'),
-('VC157', 'HD157', 'GH02', '2023-11-29', 'Trần Văn C', '0123456791', 'Xe đạp', '59D4-789.01'),
-('VC158', 'HD158', 'GH03', '2023-11-30', 'Lê Thị B', '0123456790', 'Xe đạp', '59C2-678.90'),
-('VC159', 'HD159', 'GH02', '2023-11-28', 'Lê Thị B', '0123456789', 'Xe máy', '59A1-123.45'),
-('VC160', 'HD160', 'GH02', '2023-11-30', 'Phạm Thị D', '0123456789', 'Xe máy', '59D4-789.01'),
-('VC161', 'HD161', 'GH03', '2023-11-30', 'Trần Văn C', '0123456791', 'Xe đạp', '59C2-678.90'),
-('VC162', 'HD162', 'GH02', '2023-11-29', 'Phạm Thị D', '0123456790', 'Xe máy', '59D4-789.01'),
-('VC163', 'HD163', 'GH02', '2023-11-28', 'Lê Thị B', '0123456792', 'Xe đạp', '59A1-123.45'),
-('VC164', 'HD164', 'GH02', '2023-11-28', 'Lê Thị B', '0123456792', 'Xe máy', '59C2-678.90'),
-('VC165', 'HD165', 'GH01', '2023-11-29', 'Lê Thị B', '0123456790', 'Xe máy', '59C2-678.90'),
-('VC166', 'HD166', 'GH01', '2023-11-28', 'Lê Thị B', '0123456790', 'Xe đạp', '59D4-789.01'),
-('VC167', 'HD167', 'GH02', '2023-11-28', 'Lê Thị B', '0123456791', 'Xe đạp', '59A3-234.56'),
-('VC168', 'HD168', 'GH02', '2023-11-30', 'Lê Thị B', '0123456789', 'Xe máy', '59C2-678.90'),
-('VC169', 'HD169', 'GH02', '2023-11-28', 'Trần Văn C', '0123456789', 'Xe đạp', '59D4-789.01'),
-('VC170', 'HD170', 'GH01', '2023-11-30', 'Trần Văn C', '0123456790', 'Xe máy', '59A3-234.56'),
-('VC171', 'HD171', 'GH03', '2023-11-28', 'Phạm Thị D', '0123456790', 'Xe đạp', '59C2-678.90'),
-('VC172', 'HD172', 'GH01', '2023-11-29', 'Trần Văn C', '0123456789', 'Xe đạp', '59D4-789.01'),
-('VC173', 'HD173', 'GH02', '2023-11-29', 'Nguyễn Văn A', '0123456791', 'Xe tải', '59C2-678.90'),
-('VC174', 'HD174', 'GH02', '2023-11-30', 'Nguyễn Văn A', '0123456790', 'Xe tải', '59A3-234.56'),
-('VC175', 'HD175', 'GH01', '2023-11-30', 'Trần Văn C', '0123456790', 'Xe tải', '59C2-678.90'),
-('VC176', 'HD176', 'GH02', '2023-11-30', 'Trần Văn C', '0123456792', 'Xe máy', '59A1-123.45'),
-('VC177', 'HD177', 'GH01', '2023-11-28', 'Phạm Thị D', '0123456791', 'Xe máy', '59C2-678.90'),
-('VC178', 'HD178', 'GH03', '2023-11-28', 'Lê Thị B', '0123456791', 'Xe máy', '59A3-234.56'),
-('VC179', 'HD179', 'GH01', '2023-11-28', 'Nguyễn Văn A', '0123456792', 'Xe máy', '59C2-678.90'),
-('VC180', 'HD180', 'GH02', '2023-11-29', 'Trần Văn C', '0123456791', 'Xe đạp', '59C2-678.90'),
-('VC181', 'HD181', 'GH01', '2023-11-29', 'Lê Thị B', '0123456790', 'Xe đạp', '59A3-234.56'),
-('VC182', 'HD182', 'GH03', '2023-11-28', 'Nguyễn Văn A', '0123456792', 'Xe tải', '59A3-234.56'),
-('VC183', 'HD183', 'GH01', '2023-11-30', 'Lê Thị B', '0123456790', 'Xe máy', '59D4-789.01'),
-('VC184', 'HD184', 'GH03', '2023-11-29', 'Lê Thị B', '0123456791', 'Xe tải', '59C2-678.90'),
-('VC185', 'HD185', 'GH02', '2023-11-30', 'Lê Thị B', '0123456790', 'Xe tải', '59A1-123.45'),
-('VC186', 'HD186', 'GH03', '2023-11-30', 'Lê Thị B', '0123456790', 'Xe tải', '59D4-789.01'),
-('VC187', 'HD187', 'GH02', '2023-11-30', 'Phạm Thị D', '0123456790', 'Xe tải', '59A1-123.45'),
-('VC188', 'HD188', 'GH03', '2023-11-28', 'Lê Thị B', '0123456789', 'Xe máy', '59D4-789.01'),
-('VC189', 'HD189', 'GH01', '2023-11-29', 'Trần Văn C', '0123456789', 'Xe tải', '59D4-789.01'),
-('VC190', 'HD190', 'GH02', '2023-11-30', 'Phạm Thị D', '0123456792', 'Xe đạp', '59D4-789.01'),
-('VC191', 'HD191', 'GH01', '2023-11-28', 'Lê Thị B', '0123456792', 'Xe đạp', '59C2-678.90'),
-('VC192', 'HD192', 'GH03', '2023-11-29', 'Phạm Thị D', '0123456791', 'Xe tải', '59A3-234.56'),
-('VC193', 'HD193', 'GH02', '2023-11-28', 'Phạm Thị D', '0123456789', 'Xe đạp', '59A1-123.45'),
-('VC194', 'HD194', 'GH03', '2023-11-29', 'Lê Thị B', '0123456789', 'Xe đạp', '59D4-789.01'),
-('VC195', 'HD195', 'GH03', '2023-11-28', 'Nguyễn Văn A', '0123456791', 'Xe đạp', '59A1-123.45'),
-('VC196', 'HD196', 'GH03', '2023-11-30', 'Nguyễn Văn A', '0123456789', 'Xe tải', '59A1-123.45'),
-('VC197', 'HD197', 'GH02', '2023-11-30', 'Trần Văn C', '0123456789', 'Xe tải', '59A1-123.45'),
-('VC198', 'HD198', 'GH01', '2023-11-28', 'Phạm Thị D', '0123456792', 'Xe tải', '59C2-678.90'),
-('VC199', 'HD199', 'GH02', '2023-11-29', 'Lê Thị B', '0123456792', 'Xe máy', '59A3-234.56'),
-('VC200', 'HD200', 'GH01', '2023-11-29', 'Lê Thị B', '0123456789', 'Xe đạp', '59A3-234.56');
+INSERT INTO Payment (Order_ID, Method, Delivery_ID, Promotion_ID) VALUES ('DH001', 'CASH', 'GH01', 'KM01');
+INSERT INTO Payment (Order_ID, Method, Delivery_ID, Promotion_ID) VALUES ('DH002', 'BANKING', 'GH01', 'KM01');
+INSERT INTO Payment (Order_ID, Method, Delivery_ID, Promotion_ID) VALUES ('DH003', 'CASH', 'GH02', 'KM01');
+INSERT INTO Payment (Order_ID, Method, Delivery_ID, Promotion_ID) VALUES ('DH004', 'MOMO', 'GH02', NULL);
+INSERT INTO Payment (Order_ID, Method, Delivery_ID, Promotion_ID) VALUES ('DH005', 'BANKING', 'GH01', 'KM01');
+INSERT INTO Payment (Order_ID, Method, Delivery_ID, Promotion_ID) VALUES ('DH198','BANKING', 'GH02', 'KM01');
+INSERT INTO Payment (Order_ID, Method, Delivery_ID, Promotion_ID) VALUES ('DH199','BANKING', 'GH03', 'KM01');
+INSERT INTO Payment (Order_ID, Method, Delivery_ID, Promotion_ID) VALUES ('DH200','BANKING', 'GH02', 'KM02');
+
+
+CREATE TABLE Bill (
+    Bill_ID varchar(256) NOT NULL,
+    Order_ID varchar(256) NOT NULL,
+    Bill_Date DATE NOT NULL,
+    Total_Bill DECIMAL(10, 2) NOT NULL
+);
+
+INSERT INTO Bill (Bill_ID,Order_ID,Bill_Date,Total_Bill) VALUES  ('HD001', 'DH001','2023-09-02', 330000.0);
+INSERT INTO Bill (Bill_ID,Order_ID,Bill_Date,Total_Bill) VALUES  ('HD002', 'DH002','2023-09-03', 218000.0);
+INSERT INTO Bill (Bill_ID,Order_ID,Bill_Date,Total_Bill) VALUES  ('HD003', 'DH003','2023-09-04', 61000.0);
+INSERT INTO Bill (Bill_ID,Order_ID,Bill_Date,Total_Bill) VALUES  ('HD004', 'DH004','2023-09-05', 195000.0);
+INSERT INTO Bill (Bill_ID,Order_ID,Bill_Date,Total_Bill) VALUES  ('HD005', 'DH005','2023-09-06', 289000.0);
 
 -- ##################### Key & Contrainst #######################
 
@@ -1488,9 +1141,7 @@ ALTER TABLE `Order`
   
 ALTER TABLE Bill
   ADD PRIMARY KEY (Bill_ID),
-  ADD KEY (Customer_ID),
-  ADD KEY (Order_ID),
-  ADD KEY (Promotion_ID);
+  ADD KEY (Order_ID);
   
 ALTER TABLE Product
   ADD PRIMARY KEY (Product_ID);
@@ -1508,19 +1159,14 @@ ALTER TABLE Item
   ADD KEY (Product_ID),
   ADD KEY (Combo_ID);
   
-ALTER TABLE `Event`
-  ADD PRIMARY KEY (Branch_ID, Promotion_ID),
-  ADD KEY (Branch_ID),
-  ADD KEY (Promotion_ID);
-  
 ALTER TABLE Order_Line
   ADD PRIMARY KEY (Order_ID, Item_ID),
   ADD KEY (Order_ID),
   ADD KEY (Item_ID);
   
-ALTER TABLE Transport
-  ADD PRIMARY KEY (Transport_ID),
-  ADD KEY (Bill_ID),
+ALTER TABLE Payment
+  ADD KEY (Order_ID),
+  ADD KEY (Promotion_ID),
   ADD KEY (Delivery_ID);
 -- ---------------------------------------------------------------
 
@@ -1532,11 +1178,7 @@ ALTER TABLE `Order`
 	ADD CONSTRAINT fk_orcu FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID),
     ADD CONSTRAINT fk_orca FOREIGN KEY (Cashier_ID) REFERENCES Employee(Employee_ID),
     ADD CONSTRAINT fk_orbr FOREIGN KEY (Branch_ID) REFERENCES Branch(Branch_ID);
-    
-ALTER TABLE Bill
-	ADD CONSTRAINT fk_bipr FOREIGN KEY (Promotion_ID) REFERENCES Promotion(Promotion_ID),
-    ADD CONSTRAINT fk_bicu FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID),
-    ADD CONSTRAINT fk_bior FOREIGN KEY (Order_ID) REFERENCES `Order`(Order_ID);
+	
     
 ALTER TABLE Combo_List    
     ADD CONSTRAINT fk_clcb FOREIGN KEY (Combo_ID) REFERENCES Combo(Combo_ID),
@@ -1546,49 +1188,119 @@ ALTER TABLE Item
 	ADD CONSTRAINT fk_itpr FOREIGN KEY (Product_ID) REFERENCES Product(Product_ID),
     ADD CONSTRAINT fk_itcb FOREIGN KEY (Combo_ID) REFERENCES Combo(Combo_ID);
 
-ALTER TABLE `Event`
-	ADD CONSTRAINT fk_evbr FOREIGN KEY (Branch_ID) REFERENCES Branch(Branch_ID),
-    ADD CONSTRAINT fk_evpr FOREIGN KEY (Promotion_ID) REFERENCES Promotion(Promotion_ID);
-
 ALTER TABLE Order_Line
 	ADD CONSTRAINT fk_olor FOREIGN KEY (Order_ID) REFERENCES `Order`(Order_ID),
     ADD CONSTRAINT fk_olit FOREIGN KEY (Item_ID) REFERENCES Item(Item_ID);
     
-ALTER TABLE Transport
-	ADD CONSTRAINT fk_trbi FOREIGN KEY (Bill_ID) REFERENCES Bill(Bill_ID),
-    ADD CONSTRAINT fk_trde FOREIGN KEY (Delivery_ID) REFERENCES Delivery(Delivery_ID);
-
+-- ALTER TABLE Payment
+-- 	ADD CONSTRAINT fk_paor FOREIGN KEY (Order_ID) REFERENCES `Order`(Order_ID),
+--  ADD CONSTRAINT fk_pade FOREIGN KEY (Delivery_ID) REFERENCES Delivery(Delivery_ID),
+--  ADD CONSTRAINT fk_papr FOREIGN KEY (Promotion_ID) REFERENCES Promotion(Promotion_ID);
     
--- Insert new employee
+-- ##################### FUNCTION #######################
+
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Add_new_employee` (
-    IN employeeID VARCHAR(256),
-    IN NewUserName VARCHAR(255),
-    IN NewPassword VARCHAR(255),
-    IN NewName VARCHAR(255),
-    IN NewPhoneNumber VARCHAR(20),
-    IN Gender ENUM('M','F','O'),
-    IN DateOfBirth DATE,
-    IN NewEmail VARCHAR(255),
-    IN LeaseDate DATE,
-    IN NewSalary DECIMAL(10, 2),
-    IN NewJob VARCHAR(255),
-    IN NewBranch VARCHAR(256), 
-    IN NewManager VARCHAR(256))   
-  BEGIN
+
+CREATE FUNCTION Calculate_Total_Bill(order_id VARCHAR(256)) 
+RETURNS DECIMAL(10,2)
+READS SQL DATA
+BEGIN
+    DECLARE final_bill DECIMAL(10,2);
+    DECLARE order_price DECIMAL(10,2);
+    DECLARE freight_cost DECIMAL(10,2);
+    DECLARE order_date DATE;
+    DECLARE discount_amount DECIMAL(10,2) DEFAULT 0.00;
+    DECLARE discount_type VARCHAR(10);
+    DECLARE max_amount DECIMAL(10,2);
+    DECLARE min_order DECIMAL(10,2);
+    DECLARE promo_start DATE;
+    DECLARE promo_end DATE;
+
+    -- Lấy giá trị đơn hàng
+    SELECT o.Total_Price, o.Order_Date INTO order_price, order_date
+    FROM `Order` o
+    JOIN Payment p ON o.Order_ID = p.Order_ID
+    WHERE p.Order_ID = order_id;
+
+    -- Lấy phí vận chuyển
+    SELECT d.Freight INTO freight_cost
+    FROM Delivery d
+    JOIN Payment p ON d.Delivery_ID = p.Delivery_ID
+    WHERE p.Order_ID = order_id;
+
+    -- Lấy thông tin khuyến mãi
+    SELECT pr.Discount_Value, pr.Discount_Method, pr.Maximum_Amount, pr.Minimum_Order INTO discount_amount, discount_type, max_amount, min_order
+    FROM Promotion pr
+    JOIN Payment p ON pr.Promotion_ID = p.Promotion_ID
+    WHERE p.Order_ID = order_id;
+
+    -- Kiểm tra và áp dụng khuyến mãi
+    IF (order_date >= promo_start AND order_date <= promo_end) THEN
+        IF discount_type = 'PERCENTAGE' THEN
+            SET discount_amount = LEAST((order_price * discount_amount / 100), max_amount);
+        ELSEIF discount_type = 'AMOUNT' AND order_price >= min_order THEN
+            SET discount_amount = discount_amount;
+        ELSE
+            SET discount_amount = 0.00;
+        END IF;
+    ELSE
+        SET discount_amount = 0.00;
+    END IF;
+
+    -- Tính toán tổng hóa đơn
+    SET final_bill = order_price + freight_cost - discount_amount;
+
+    RETURN final_bill;
+END$$
+
+DELIMITER ;
+
+-- ---------------------------
+
+DELIMITER $$
+
+CREATE FUNCTION Best_Seller(start_date DATE, end_date DATE, branch_id VARCHAR(256)) 
+RETURNS VARCHAR(256)
+READS SQL DATA
+BEGIN
+    DECLARE product_name VARCHAR(256);
+
+    SELECT p.Name INTO product_name
+    FROM Order_Line ol
+    JOIN `Order` o ON ol.Order_ID = o.Order_ID
+    JOIN Item i ON ol.Item_ID = i.Item_ID
+    JOIN Product p ON i.Product_ID = p.Product_ID
+    WHERE o.Order_Date >= start_date AND o.Order_Date <= end_date
+      AND o.Branch_ID = branch_id
+    GROUP BY ol.Item_ID
+    ORDER BY SUM(ol.Total_Price) DESC
+    LIMIT 1;
+
+    RETURN product_name;
+END$$
+
+DELIMITER ;
+
+
+
+-- ##################### PROCEDUCE #######################
+
+DELIMITER $$
+--
+-- Thủ tục
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Add_new_employee` (IN `employeeID` VARCHAR(256), IN `NewUserName` VARCHAR(255), IN `NewPassword` VARCHAR(255), IN `NewName` VARCHAR(255), IN `NewPhoneNumber` VARCHAR(20), IN `Gender` ENUM('M','F','O'), IN `DateOfBirth` DATE, IN `NewEmail` VARCHAR(255), IN `LeaseDate` DATE, IN `NewSalary` DECIMAL(10,2), IN `NewJob` VARCHAR(255), IN `NewBranch` VARCHAR(256), IN `NewManager` VARCHAR(256))   BEGIN
     IF(EXISTS (SELECT * FROM Employee WHERE Employee_ID = employeeID)) THEN
         signal sqlstate '45000' set message_text = 'Existing ID';
       ELSEIF(EXISTS (SELECT * FROM Employee WHERE UserName = NewUserName)) THEN
         signal sqlstate '45000' set message_text = 'Existing User Name';
       ELSEIF(EXISTS (SELECT * FROM Employee WHERE Phone_Number = NewPhoneNumber)) THEN
         signal sqlstate '45000' set message_text = 'Existing Phone Number';
-      ELSEIF(EXISTS (SELECT * FROM Employee WHERE Email = NewEmail)) THEN
-        signal sqlstate '45000' set message_text = 'Existing Email';
       ELSEIF (SELECT LENGTH(NewPhoneNumber) <> 10 || NewPhoneNumber NOT REGEXP "^0[0-9]{9}") THEN
         signal sqlstate '45000' set message_text = 'Invalid Phone Number';
-      ELSEIF (CHAR_LENGTH(NewUserName) < 7 || CHAR_LENGTH(NewUserName) > 30) THEN
+      ELSEIF (CHAR_LENGTH(NewUserName) < 8 || CHAR_LENGTH(NewUserName) > 30) THEN
           SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid User Name';
-      ELSEIF (CHAR_LENGTH(NewPassword) < 7 || CHAR_LENGTH(NewPassword) > 30) THEN
+      ELSEIF (CHAR_LENGTH(NewPassword) < 8 || CHAR_LENGTH(NewPassword) > 30) THEN
           SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid Password';
       ELSEIF NOT EXISTS (SELECT * FROM Employee WHERE Employee_ID = NewManager) THEN
           SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Manager Not Found';
@@ -1599,13 +1311,8 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Add_new_employee` (
           VALUES (employeeID, NewUserName, NewPassword, NewName, NewPhoneNumber, DateOfBirth, Gender, NewEmail, LeaseDate, NewSalary, NewJob, NewBranch, NewManager);
       END IF;
   END$$
-DELIMITER ;
 
--- Delete an employee
-DELIMITER $$
-
-CREATE PROCEDURE DeleteEmployee(IN employeeID VARCHAR(256))
-BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteEmployee` (IN `employeeID` VARCHAR(256))   BEGIN
     -- Check if the employee exists
     IF EXISTS (SELECT * FROM Employee WHERE Employee_ID = employeeID) THEN
         -- Delete the employee
@@ -1614,123 +1321,69 @@ BEGIN
     ELSE
         SELECT 'Employee not found' AS Result;
     END IF;
-END $$
-
-DELIMITER ;
-
--- Update the information of an employee
-DELIMITER $$
-
-CREATE PROCEDURE UpdateEmployee(
-    IN employeeID VARCHAR(256),
-    IN NewName VARCHAR(255),
-    IN NewPhone VARCHAR(20),
-    IN Gender ENUM('M','F','O'),
-    IN DateOfBirth DATE,
-    IN NewEmail VARCHAR(255),
-    IN LeaseDate DATE,
-    IN NewSalary DECIMAL(10, 2),
-    IN NewJob VARCHAR(255),
-    IN NewBranch VARCHAR(256), 
-    IN NewManager VARCHAR(256)
-)
-BEGIN
-    -- Check if the employee exists
-    IF NOT EXISTS (SELECT * FROM Employee WHERE Employee_ID = employeeID) THEN
-            signal sqlstate '45000' set message_text = 'Employee Not Found';
-        ELSEIF(EXISTS (SELECT * FROM Employee WHERE Phone_Number = NewPhoneNumber)) THEN
-            signal sqlstate '45000' set message_text = 'Existing Phone Number';
-        ELSEIF(EXISTS (SELECT * FROM Employee WHERE Email = NewEmail)) THEN
-            signal sqlstate '45000' set message_text = 'Existing Email';
-        ELSEIF (SELECT LENGTH(NewPhoneNumber) <> 10 || NewPhoneNumber NOT REGEXP "^0[0-9]{9}") THEN
-            signal sqlstate '45000' set message_text = 'Invalid Phone Number';
-        ELSEIF NOT EXISTS (SELECT * FROM Employee WHERE Employee_ID = NewManager) THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Manager Not Found';
-        ELSEIF NOT EXISTS (SELECT * FROM Branch WHERE Branch_ID = NewBranch) THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Branch Not Found';
-        ELSE
-            -- Update the employee information
-            UPDATE Employee
-            SET Name = NewName,
-                Phone_Number = NewPhone,
-                SEX = Gender,
-                DoB = DateOfBirth,
-                Email = NewEmail,
-                Date_of_Lease = LeaseDate,
-                Salary = NewSalary,
-                Job_Type = NewJob,
-                Branch_ID = NewBranch,
-                Manager_ID = NewManager 
-            WHERE Employee_ID = employeeID;
-            SELECT 'Employee information updated successfully' AS Result;
-    END IF;
-END $$
-
-DELIMITER ;
-
-
-
--- Trigger to calculate the total price when adding new to cart
-DELIMITER $$
-CREATE TRIGGER `calculate_order_total` AFTER INSERT ON `Order_Line`
- FOR EACH ROW BEGIN
-    DECLARE order_total DECIMAL(10, 2);
-    
-    -- Calculate the total price for the order
-    SELECT SUM(Total_Price) INTO order_total
-    FROM Order_Line
-    WHERE Order_ID = NEW.Order_ID;
-    
-    -- Update the total price in the Order table
-    UPDATE `Order`
-    SET Total_Price = order_total
-    WHERE Order_ID = NEW.Order_ID;
-END $$
-DELIMITER ;
-
--- Trigger to calculate the total price when updating price on combo
-DELIMITER $$
-CREATE TRIGGER `calculate_order_total_on_combo_price_update` AFTER UPDATE ON `Combo`
- FOR EACH ROW BEGIN
-    DECLARE order_total DECIMAL(10, 2);
-
-    -- Calculate the total price for the order
-    SELECT SUM(Combo.Price) INTO order_total
-    FROM `Order`
-    JOIN Order_Line ON `Order`.Order_ID = Order_Line.Order_ID
-    JOIN Item ON Order_Line.Item_ID = Item.Item_ID
-    JOIN Combo ON Item.Combo_ID = Combo.Combo_ID
-    WHERE Item.Combo_ID = OLD.Combo_ID;
-
-    -- Update the total price in the Order table
-    UPDATE `Order`
-    SET Total_Price = order_total
-    WHERE Order_ID IN (SELECT Order_ID FROM Order_Line WHERE Item_ID IN (SELECT Item_ID FROM Item WHERE Combo_ID = OLD.Combo_ID));
 END$$
-DELIMITER ;
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `FilterTotalSalary` (IN `salaryThreshold` DECIMAL(10,2))   BEGIN
+    DECLARE tempTableExists INT;
+    DECLARE tempIncomeTableExists INT;
 
--- Trigger to calculate the total price when updating price on product
-DELIMITER $$
-CREATE TRIGGER `calculate_order_total_on_product_price_update` AFTER UPDATE ON `Product`
- FOR EACH ROW BEGIN
-    DECLARE order_total DECIMAL(10, 2);
+    -- Check if the temporary table exists
+    SELECT COUNT(*)
+    INTO tempTableExists
+    FROM information_schema.tables
+    WHERE table_name = 'BranchTotalSalary';
 
-    -- Calculate the total price for the order
-    SELECT SUM(Product.Price) INTO order_total
-    FROM `Order`
-    JOIN Order_Line ON `Order`.Order_ID = Order_Line.Order_ID
-    WHERE Order_Line.Product_ID = OLD.Product_ID;
+    SELECT COUNT(*)
+    INTO tempIncomeTableExists
+    FROM information_schema.tables
+    WHERE table_name = 'BranchTotalIncome';
 
-    -- Update the total price in the Order table
-    UPDATE `Order`
-    SET Total_Price = order_total
-    WHERE Order_ID IN (SELECT Order_ID FROM Order_Line WHERE Product_ID = OLD.Product_ID);
-END $$
-DELIMITER ;
+    IF tempTableExists > 0 THEN
+        -- Drop the temporary table
+        DROP TEMPORARY TABLE BranchTotalSalary;
+    END IF;
 
+    IF tempIncomeTableExists > 0 THEN
+        -- Drop the temporary table
+        DROP TEMPORARY TABLE BranchTotalIncome;
+    END IF;
 
--- Display order detail
+    -- Create a temporary table to store branch-wise total salary
+    CREATE TEMPORARY TABLE IF NOT EXISTS BranchTotalSalary (
+        BranchID VARCHAR(256),
+        TotalSalary DECIMAL(10, 2)
+    );
+
+    CREATE TEMPORARY TABLE IF NOT EXISTS BranchTotalIncome (
+        BranchID VARCHAR(256),
+        TotalIncome DECIMAL(10, 2)
+    );
+
+    -- Calculate and insert total salary for each branch into the temporary table
+    INSERT INTO BranchTotalSalary (BranchID, TotalSalary)
+    SELECT e.Branch_ID, SUM(e.Salary) AS TotalSalary
+    FROM Employee e
+    GROUP BY e.Branch_ID;
+
+    -- Calculate and insert total income for each branch into the temporary table
+    INSERT INTO BranchTotalIncome (BranchID, TotalIncome)
+    SELECT Branch_ID, SUM(b.Total_Price)
+    FROM `Order` o 
+    JOIN Bill b ON o.Order_ID = b.Order_ID
+    GROUP BY o.Branch_ID;
+
+    -- Display branches where the total salary is greater than the specified value
+    SELECT b.Branch_ID, b.Name, b.Province, b.District, b.Ward, b.Street, ts.TotalSalary, inc.TotalIncome
+    FROM Branch b
+    JOIN BranchTotalSalary ts ON b.Branch_ID = ts.BranchID
+    JOIN BranchTotalIncome inc ON b.Branch_ID = inc.BranchID
+    WHERE ts.TotalSalary > salaryThreshold;
+
+    -- Drop the temporary table
+    DROP TEMPORARY TABLE IF EXISTS BranchTotalSalary;
+    DROP TEMPORARY TABLE IF EXISTS BranchTotalIncome;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `ShowOrderDetail` (IN `billID` VARCHAR(256))   BEGIN
     DECLARE tempProductTableExists INT;
     DECLARE tempComboTableExists INT;
@@ -1798,67 +1451,82 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `ShowOrderDetail` (IN `billID` VARCH
 
 END$$
 
--- Display branches having total salary of employees greater than x value
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `FilterTotalSalary`(IN salaryThreshold DECIMAL(10, 2))
-BEGIN
-    DECLARE tempTableExists INT;
-    DECLARE tempIncomeTableExists INT;
-
-    -- Check if the temporary table exists
-    SELECT COUNT(*)
-    INTO tempTableExists
-    FROM information_schema.tables
-    WHERE table_name = 'BranchTotalSalary';
-
-    SELECT COUNT(*)
-    INTO tempIncomeTableExists
-    FROM information_schema.tables
-    WHERE table_name = 'BranchTotalIncome';
-
-    IF tempTableExists > 0 THEN
-        -- Drop the temporary table
-        DROP TEMPORARY TABLE BranchTotalSalary;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateEmployee` (IN `employeeID` VARCHAR(256), IN `NewName` VARCHAR(255), IN `NewPhone` VARCHAR(20), IN `Gender` ENUM('M','F','O'), IN `DateOfBirth` DATE, IN `NewEmail` VARCHAR(255), IN `LeaseDate` DATE, IN `NewSalary` DECIMAL(10,2), IN `NewJob` VARCHAR(255), IN `NewBranch` VARCHAR(256), IN `NewManager` VARCHAR(256))   BEGIN
+    -- Check if the employee exists
+    IF EXISTS (SELECT * FROM Employee WHERE Employee_ID = employeeID) THEN
+        -- Update the employee information
+        UPDATE Employee
+        SET Name = NewName,
+            Phone_Number = NewPhone,
+            SEX = Gender,
+            DoB = DateOfBirth,
+            Email = NewEmail,
+            Date_of_Lease = LeaseDate,
+            Salary = NewSalary,
+            Job_Type = NewJob,
+            Branch_ID = NewBranch,
+            Manager_ID = NewManager 
+        WHERE Employee_ID = employeeID AND EXISTS(SELECT * FROM Employee WHERE Employee_ID = NewManager) AND EXISTS(SELECT * FROM Branch WHERE Branch_ID = NewBranch);
+        
+        SELECT 'Employee information updated successfully' AS Result;
+    ELSE
+        SELECT 'Employee not found' AS Result;
     END IF;
-
-    IF tempIncomeTableExists > 0 THEN
-        -- Drop the temporary table
-        DROP TEMPORARY TABLE BranchTotalIncome;
-    END IF;
-
-    -- Create a temporary table to store branch-wise total salary
-    CREATE TEMPORARY TABLE IF NOT EXISTS BranchTotalSalary (
-        BranchID VARCHAR(256),
-        TotalSalary DECIMAL(10, 2)
-    );
-
-    CREATE TEMPORARY TABLE IF NOT EXISTS BranchTotalIncome (
-        BranchID VARCHAR(256),
-        TotalIncome DECIMAL(10, 2)
-    );
-
-    -- Calculate and insert total salary for each branch into the temporary table
-    INSERT INTO BranchTotalSalary (BranchID, TotalSalary)
-    SELECT e.Branch_ID, SUM(e.Salary) AS TotalSalary
-    FROM Employee e
-    GROUP BY e.Branch_ID;
-
-    -- Calculate and insert total income for each branch into the temporary table
-    INSERT INTO BranchTotalIncome (BranchID, TotalIncome)
-    SELECT Branch_ID, SUM(b.Total_Price)
-    FROM Order o 
-    JOIN Bill b ON o.Order_ID = b.Order_ID
-    GROUP BY o.Branch_ID;
-
-    -- Display branches where the total salary is greater than the specified value
-    SELECT b.Branch_ID, b.Name, b.Province, b.District, b.Ward, b.Street, ts.TotalSalary, inc.TotalIncome
-    FROM Branch b
-    JOIN BranchTotalSalary ts ON b.Branch_ID = ts.BranchID
-    JOIN BranchTotalIncome inc ON b.Branch_ID = inc.BranchID
-    WHERE ts.TotalSalary > salaryThreshold;
-
-    -- Drop the temporary table
-    DROP TEMPORARY TABLE IF EXISTS BranchTotalSalary;
-    DROP TEMPORARY TABLE IF EXISTS BranchTotalIncome;
 END$$
+
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+-- Top 10 sản phẩm bán chạy nhất
+DELIMITER $$
+
+CREATE PROCEDURE Top10_Items(IN start_date DATE, IN end_date DATE, IN branch_id VARCHAR(256))
+BEGIN
+    SELECT ol.Item_ID, p.Name AS Product_Name, SUM(ol.Total_Price) AS Total_Revenue
+    FROM Order_Line ol
+    JOIN `Order` o ON ol.Order_ID = o.Order_ID
+    JOIN Item i ON ol.Item_ID = i.Item_ID
+    JOIN Product p ON i.Product_ID = p.Product_ID
+    WHERE o.Order_Date >= start_date AND o.Order_Date <= end_date
+      AND o.Branch_ID = branch_id
+    GROUP BY ol.Item_ID
+    ORDER BY Total_Revenue DESC
+    LIMIT 10;
+END$$
+
+DELIMITER ;
+
+
+-- ##################### TRIGGER #######################
+DELIMITER $$
+
+CREATE TRIGGER add_bill AFTER UPDATE ON `Order`
+FOR EACH ROW
+BEGIN
+		DECLARE return_bill DECIMAL(10,2);
+		IF OLD.Status = 'PROCESSING' AND NEW.Status = 'CONFIRMED' THEN
+        
+        
+        -- Gọi hàm để tính toán Total_Bill
+        SET return_bill = Calculate_Total_Bill(NEW.Order_ID);
+
+        -- Insert vào bảng Bill
+        INSERT INTO Bill (Bill_ID, Order_ID, Bill_Date, Total_Bill)
+        VALUES (CONCAT('HD', SUBSTRING(NEW.Order_ID, 3)), NEW.Order_ID, CURDATE(), return_bill);
+    END IF;
+END$$
+
+DELIMITER ;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+
+
+
+    
+  
+
