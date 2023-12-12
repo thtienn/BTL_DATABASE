@@ -12,11 +12,12 @@ else {
     $query = "SELECT * FROM `Customer` WHERE `UserName` = '$username' AND `Password` = '$password'";
     $result = mysqli_query($conn, $query);
     $check = mysqli_fetch_array($result);
-
-    
+    $customerInfo = mysqli_fetch_assoc($result);
         if (isset($check)) {
+            session_start();
+            $_SESSION['customerId'] = $customerInfo['Customer_ID'];
             echo "New record created successfully";
-            header('Location: view');
+            header('Location: view');;
         }
         else {
             echo "Error: " . $query . "<br>" . $conn->error;
