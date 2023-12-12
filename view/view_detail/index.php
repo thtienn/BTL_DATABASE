@@ -24,7 +24,11 @@ if (isset($_GET['Product_ID'])) {
 
             // Fetching the image path directly from the row
             $result2 = $row['Photo'];
-
+            echo "<header>
+                <meta charset='utf-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1'>
+                <title>Detail</title>
+                </header>";
             echo "<div class='card'>
                 <img src='$result2' class='card-img-top' alt=''>
                 <div class='card-body'>
